@@ -1,0 +1,14 @@
+{
+  "host": "example-vm",
+  "generated_at": "2026-11-27T01:02:03Z",
+  "human_entrance": {"state": "active", "detail": "sshd running"},
+  "tailscale": {"state": "connected", "detail": "logged in"},
+  "disks": [
+    {"mount": "/", "used_percent": 42},
+    {"mount": "/var", "used_percent": 93}
+  ],
+  "sessions": [
+    {"name": "claude-1", "agent": "claude-code", "started_at": "2026-11-27T00:00:00Z"},
+    {"name": "muse-1", "agent": "muse", "started_at": "2026-11-26T23:00:00Z"}
+  ]
+}

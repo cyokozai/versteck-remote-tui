@@ -1,0 +1,9 @@
+# テスト用の image。CI は ubuntu:26.04、手元では --build-arg BASE=versteck-ci:local を渡す。
+ARG BASE=ubuntu:26.04
+FROM ${BASE}
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      bats gum jq shellcheck make tar gzip coreutils util-linux procps \
+ && rm -rf /var/lib/apt/lists/*
+WORKDIR /src
+CMD ["make", "check"]

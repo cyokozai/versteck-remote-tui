@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+# 偽の gum。引数を記録し、FAKE_GUM_ANSWERS の先頭の行を答えとして返す。
+# 本物より厳しく引数を検査し、呼び出しの誤りをテストで落とす。
+#   - 知らないサブコマンド・知らないフラグは 99
+#   - 位置引数は必ず -- の後ろに置く。-- より前に位置引数があれば 98
+#     （外から来た文字列が - で始まると、本物の gum はフラグと読んで失敗するため）
+#   - choose・filter の答えが選択肢（位置引数、無ければ標準入力の行）に無ければ 97
+#   - confirm の --default は --default=false の形だけを受け付ける（--default false は位置引数が 2 つになり 98）
+# 答えの特別な行:
+#   <esc>    : choose は「nothing selected」を標準エラーに出して 1（gum 0.17.0 の Esc）、confirm は 1、filter は 130
+#   <ctrl-c> : 130
+#   答えが尽きたら 130（Ctrl-C と同じ）
+log="$FAKE_LOG_DIR/gum.log"
+# パイプの中で同時に動く gum（format | pager）の記録が混ざらないよう、1 回の書き込みにまとめる
+line=$(printf ' [%s]' "$@")
+printf 'gum%s\n' "$line" >>"$log"
+
+die() {
+  local code=$1
+  shift
+  echo "fake gum: $*" >&2
+  exit "$code"
+}
+
+pop() {
+  local first
+  [[ -s $FAKE_GUM_ANSWERS ]] || return 1
+  first=$(head -n 1 "$FAKE_GUM_ANSWERS")
+  tail -n +2 "$FAKE_GUM_ANSWERS" >"$FAKE_GUM_ANSWERS.tmp"
+  mv "$FAKE_GUM_ANSWERS.tmp" "$FAKE_GUM_ANSWERS"
+  printf '%s\n' "$first"
+}
+
+sub=${1-}
+shift
+# サブコマンドごとの、値を取るフラグと値を取らないフラグ
+case $sub in
+  choose) value_flags=" --header --height --cursor --limit --timeout " bool_flags=" --no-limit --ordered " ;;
+  filter) value_flags=" --header --placeholder --prompt --height --limit --value " bool_flags=" --no-limit --fuzzy --strict " ;;
+  confirm) value_flags=" --affirmative --negative --timeout " bool_flags=" --default " ;;
+  style) value_flags=" --foreground --background --border --border-foreground --border-background --align --height --width --margin --padding " bool_flags=" --bold --faint --italic --strikethrough --underline --trim " ;;
+  pager | format) value_flags=" " bool_flags=" " ;;
+  *) die 99 "unknown subcommand $sub" ;;
+esac
+
+args=()
+while (($#)); do
+  case $1 in
+    --)
+      shift
+      args+=("$@")
+      break
+      ;;
+    --default=true | --default=false)
+      [[ $sub == confirm ]] || die 99 "unknown flag $1 for $sub"
+      ;;
+    --*=*)
+      [[ $value_flags == *" ${1%%=*} "* ]] || die 99 "unknown flag ${1%%=*} for $sub"
+      ;;
+    --*)
+      if [[ $value_flags == *" $1 "* ]]; then
+        (($# >= 2)) || die 99 "flag $1 needs a value"
+        shift
+      elif [[ $bool_flags != *" $1 "* ]]; then
+        die 99 "unknown flag $1 for $sub"
+      fi
+      ;;
+    *) die 98 "positional argument before --: $1" ;;
+  esac
+  shift
+done
+
+# 選択肢: 位置引数、無ければ標準入力の行
+read_choices() {
+  choices=("${args[@]}")
+  if ((${#choices[@]} == 0)) && [[ ! -t 0 ]]; then
+    mapfile -t choices
+  elif [[ ! -t 0 ]]; then
+    cat >/dev/null
+  fi
+}
+
+in_choices() {
+  local c
+  for c in "${choices[@]}"; do
+    [[ $c == "$1" ]] && return 0
+  done
+  return 1
+}
+
+case $sub in
+  choose | filter)
+    read_choices
+    ((${#choices[@]} > 0)) || die 97 "no choices"
+    ans=$(pop) || exit 130
+    case $ans in
+      "<ctrl-c>") exit 130 ;;
+      "<esc>")
+        [[ $sub == filter ]] && exit 130
+        echo "nothing selected" >&2
+        exit 1
+        ;;
+    esac
+    in_choices "$ans" || die 97 "answer '$ans' is not among the choices: ${choices[*]}"
+    printf '%s\n' "$ans"
+    ;;
+  confirm)
+    ((${#args[@]} <= 1)) || die 98 "confirm takes one prompt, got ${#args[@]}: ${args[*]}"
+    ans=$(pop) || exit 130
+    case $ans in
+      yes) exit 0 ;;
+      no | "<esc>") exit 1 ;;
+      "<ctrl-c>") exit 130 ;;
+      *) die 97 "confirm answer must be yes / no / <esc> / <ctrl-c>: $ans" ;;
+    esac
+    ;;
+  pager)
+    ((${#args[@]} == 0)) || die 98 "pager reads stdin only"
+    { printf -- '--- pager ---\n'; cat; } >>"$FAKE_LOG_DIR/pager.out"
+    ;;
+  format)
+    if ((${#args[@]} > 0)); then printf '%s\n' "${args[@]}"; else cat; fi
+    ;;
+  style)
+    if ((${#args[@]} > 0)); then printf '%s\n' "${args[@]}"; else cat; fi
+    ;;
+esac

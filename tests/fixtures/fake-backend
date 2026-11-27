@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# 偽のバックエンド（docs/interface.md の版 1 の形）。
+#   FAKE_BACKEND_FAIL=<code>  interface-version 以外のサブコマンドをその終了コードで失敗させる
+#   FAKE_INTERFACE_JSON       interface-version の出力を差し替える
+#   FAKE_STATUS_JSON / FAKE_AUDIT_JSONL  返す中身のファイル
+here="$(cd "$(dirname "$0")" && pwd)"
+line=$(printf ' [%s]' "$@")
+printf 'backend%s\n' "$line" >>"$FAKE_LOG_DIR/backend.log"
+sub=${1:-}
+shift || true
+if [[ $sub == interface-version ]]; then
+  printf '%s\n' "${FAKE_INTERFACE_JSON:-"{\"interface\":1}"}"
+  exit 0
+fi
+if [[ -n ${FAKE_BACKEND_FAIL:-} ]]; then
+  echo "fake backend: failing with $FAKE_BACKEND_FAIL" >&2
+  exit "$FAKE_BACKEND_FAIL"
+fi
+case $sub in
+  status)
+    [[ ${1:-} == --json ]] || exit 2
+    cat "${FAKE_STATUS_JSON:-$here/status-ok.json}"
+    ;;
+  peek)
+    case ${1:-} in
+      claude-1 | muse-1) printf 'screen of %s\n$ echo hi\nhi\n' "$1" ;;
+      "") exit 2 ;;
+      *)
+        echo "no such session: $1" >&2
+        exit 3
+        ;;
+    esac
+    ;;
+  stop)
+    case ${1:-} in
+      --all | claude-1 | muse-1) echo "stopped $1" ;;
+      "") exit 2 ;;
+      *) exit 3 ;;
+    esac
+    ;;
+  audit)
+    [[ ${1:-} == --json ]] || exit 2
+    cat "${FAKE_AUDIT_JSONL:-$here/audit.jsonl}"
+    ;;
+  kill-switches)
+    printf '# 止め方\n\n1. VM を止める\n'
+    ;;
+  *) exit 2 ;;
+esac
