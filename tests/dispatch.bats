@@ -93,7 +93,7 @@ setup() {
     : >"$FAKE_LOG_DIR/backend.log"
     SSH_ORIGINAL_COMMAND=$cmd run "$BIN"
     [ "$status" -eq 2 ] || { echo "許してしまった: $cmd"; return 1; }
-    [[ $output == *許可されていない* ]]
+    [[ $output == *"Command not allowed"* ]]
     [ -z "$(backend_log)" ]
   done
   [ ! -e /tmp/vrt-pwned ]

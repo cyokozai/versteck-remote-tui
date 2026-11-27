@@ -15,15 +15,15 @@ vrt_is_tty() {
 
 vrt_usage() {
   cat <<'EOF'
-使い方: versteck-remote-tui [status | audit [--limit N] | version | help]
+Usage: versteck-remote-tui [status | audit [--limit N] | version | help]
 
-  引数なし（端末から）  メニュー（TUI）を出す
-  status                状態の一覧を数行で出す
-  audit [--limit N]     監査ログを新しい順に N 件（既定 20、1〜9999）
-  version               版とインターフェースの版
-  help                  この説明
+  (no arguments, from a terminal)  show the menu (TUI)
+  status                           print a short status summary
+  audit [--limit N]                print the latest N audit log entries, newest first (default 20, 1-9999)
+  version                          print the version and the interface version
+  help                             print this help
 
-機械向けの出力（JSON）が要るときは、バックエンド（既定 /usr/local/sbin/versteck-ctl）を直接使ってください。
+For machine-readable output (JSON), use the backend (default /usr/local/sbin/versteck-ctl) directly.
 EOF
 }
 
@@ -48,7 +48,7 @@ vrt_run_ssh_command() {
   local cmd=$1
   local -a words
   if [[ ! $cmd =~ $VRT_SSH_COMMAND_RE ]]; then
-    echo "許可されていないコマンドです。使えるのは status / audit [--limit N] / version / help だけです。" >&2
+    echo "Command not allowed. Only status / audit [--limit N] / version / help can be used." >&2
     return 2
   fi
   read -r -a words <<<"$cmd"
@@ -110,7 +110,7 @@ vrt_text_status() {
     return "$(vrt_text_exit_code "$rc")"
   fi
   if ! printf '%s\n' "$json" | vrt_format_status_text 2>/dev/null; then
-    echo "バックエンドの出力を読めません（status --json が JSON のオブジェクトではありません）。" >&2
+    echo "Cannot read the backend output (status --json is not a JSON object)." >&2
     return 4
   fi
 }

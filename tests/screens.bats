@@ -11,16 +11,16 @@ setup() {
 }
 
 @test "覗く: 選んだセッションの画面を pager で見せ、再読み込みで取り直す" {
-  gum_answers "claude-1" "再読み込み" "戻る"
+  gum_answers "claude-1" "Reload" "Back"
   run vrt_screen_peek
   [ "$status" -eq 0 ]
   [ "$(grep -c '\[peek\] \[claude-1\]' "$FAKE_LOG_DIR/backend.log")" -eq 2 ]
   [[ "$(pager_out)" == *"screen of claude-1"* ]]
-  [[ "$(pager_out)" == *"読み取り専用"* ]]
+  [[ "$(pager_out)" == *"read-only"* ]]
 }
 
 @test "覗く: tmux には触らない（バックエンドの peek だけを呼ぶ）" {
-  gum_answers "muse-1" "戻る"
+  gum_answers "muse-1" "Back"
   run vrt_screen_peek
   [[ "$(backend_log)" == *"[peek] [muse-1]"* ]]
   [[ "$(backend_log)" != *attach* ]]
@@ -34,7 +34,7 @@ exec "$FIXTURES/fake-backend" "\$@"
 EOF
   chmod +x "$BATS_TEST_TMPDIR/backend"
   export VERSTECK_TUI_BACKEND="$BATS_TEST_TMPDIR/backend"
-  gum_answers "claude-1" "戻る"
+  gum_answers "claude-1" "Back"
   run vrt_screen_peek
   [[ "$(pager_out)" != *$'\e'* ]]
   [[ "$(pager_out)" != *$'\a'* ]]
@@ -50,7 +50,7 @@ EOF
   export VERSTECK_TUI_BACKEND="$BATS_TEST_TMPDIR/backend"
   gum_answers "claude-1"
   run vrt_screen_peek
-  [[ $output == *"対象が見つかりません"* ]]
+  [[ $output == *"Target not found"* ]]
 }
 
 @test "止め方の手順: バックエンドの Markdown を gum format に通して見せる" {
@@ -65,7 +65,7 @@ EOF
 @test "止め方の手順: 取得に失敗したら文言を出す" {
   export FAKE_BACKEND_FAIL=4
   run vrt_screen_kill_switches
-  [[ $output == *"取得できませんでした"* ]]
+  [[ $output == *"Could not get the information"* ]]
 }
 
 @test "シェルへ降りる: 記録の外であることを書き、目印を立て、更新を止めてから exec する" {
@@ -73,7 +73,7 @@ EOF
   VRT_KEEPALIVE_PID=""
   gum_answers "yes"
   run vrt_screen_shell
-  [[ $output == *"TUI の記録の外"* ]]
+  [[ $output == *"outside the TUI record"* ]]
   [[ $output == *"SHELL-EXEC skip=1 keepalive=none"* ]]
 }
 
@@ -83,25 +83,25 @@ EOF
   run vrt_screen_shell
   [ "$status" -eq 0 ]
   [[ $output != *SHELL-EXEC* ]]
-  [[ $output == *"シェルへ降りませんでした。"* ]]
+  [[ $output == *"Did not drop to a shell."* ]]
 }
 
 @test "メニュー: 上部に認証の方式を出し、終了で 0" {
   vrt_is_tty() { return 0; }
-  gum_answers "終了"
+  gum_answers "Quit"
   run vrt_main
   [ "$status" -eq 0 ]
-  grep '^gum \[choose\]' "$FAKE_LOG_DIR/gum.log" | head -1 | grep -q "認証: sudo なし"
+  grep '^gum \[choose\]' "$FAKE_LOG_DIR/gum.log" | head -1 | grep -q "auth: no sudo"
 }
 
 @test "メニュー: 6 つの画面を並べ、Ansible の再実行と PR の一覧は無い" {
   vrt_is_tty() { return 0; }
-  gum_answers "終了"
+  gum_answers "Quit"
   run vrt_main
   local menu
   menu=$(gum_log)
   local item
-  for item in "状態の一覧" "セッションを覗く" "セッションを止める" "監査ログ" "止め方の手順" "シェルへ降りる"; do
+  for item in "Status" "Peek session" "Stop session" "Audit log" "Kill switches" "Drop to shell"; do
     [[ $menu == *"[$item]"* ]] || { echo "無い: $item"; return 1; }
   done
   [[ $menu != *Ansible* ]]
@@ -110,10 +110,10 @@ EOF
 
 @test "メニュー: 選んだ画面に入り、戻ってくる" {
   vrt_is_tty() { return 0; }
-  gum_answers "状態の一覧" "戻る" "終了"
+  gum_answers "Status" "Back" "Quit"
   run vrt_main
   [ "$status" -eq 0 ]
-  [[ "$(pager_out)" == *"ホスト: example-vm"* ]]
+  [[ "$(pager_out)" == *"Host: example-vm"* ]]
 }
 
 @test "メニュー: gum が無ければ分かる文を出してシェルへ降りる" {
@@ -121,7 +121,7 @@ EOF
   vrt__exec_login_shell() { echo "SHELL-EXEC"; }
   vrt_have_command() { [[ $1 != gum ]]; }
   run vrt_main
-  [[ $output == *"gum が見つかりません"* ]]
+  [[ $output == *"gum not found"* ]]
   [[ $output == *SHELL-EXEC* ]]
 }
 
@@ -148,7 +148,7 @@ EOF
 
 @test "メニュー: 画面の中の Ctrl-C はメニューに戻るだけ" {
   vrt_is_tty() { return 0; }
-  gum_answers "状態の一覧" "<ctrl-c>" "終了"
+  gum_answers "Status" "<ctrl-c>" "Quit"
   run vrt_main
   [ "$status" -eq 0 ]
 }
@@ -177,9 +177,9 @@ EOF
   vrt__exec_login_shell() { echo "SHELL-EXEC"; }
   vrt_have_command() { [[ $1 != jq ]]; }
   run vrt_main
-  [[ $output == *"jq が見つかりません"* ]]
-  [[ $output != *"gum が見つかりません"* ]]
-  [[ $output != *"gum と"* ]]
+  [[ $output == *"jq not found"* ]]
+  [[ $output != *"gum not found"* ]]
+  [[ $output != *"gum and"* ]]
   [[ $output == *SHELL-EXEC* ]]
 }
 
@@ -188,23 +188,23 @@ EOF
   vrt__exec_login_shell() { echo "SHELL-EXEC"; }
   vrt_have_command() { [[ $1 != jq && $1 != gum ]]; }
   run vrt_main
-  [[ $output == *"gum と jq が見つかりません"* ]]
+  [[ $output == *"gum and jq not found"* ]]
 }
 
 @test "覗く: 名前の形が合わないセッションの件数を出す" {
   echo '{"sessions":[{"name":"bad;rm"},{"name":"claude-1"}]}' >"$BATS_TEST_TMPDIR/bad.json"
   export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/bad.json"
-  gum_answers "戻る"
+  gum_answers "Back"
   run vrt_screen_peek
-  [[ $output == *"名前の形が合わないセッションが 1 件あり、一覧に出していません"* ]]
+  [[ $output == *"1 session(s) have a malformed name and are not listed"* ]]
 }
 
 @test "覗く: status の JSON が壊れていれば取得の失敗と出す" {
   printf 'not json\n' >"$BATS_TEST_TMPDIR/broken.json"
   export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/broken.json"
   run vrt_screen_peek
-  [[ $output == *"セッションの一覧を取得できませんでした"* ]]
-  [[ $output != *"ありません"* ]]
+  [[ $output == *"Could not get the session list"* ]]
+  [[ $output != *"No agent sessions are running"* ]]
 }
 
 @test "表示幅の数え方: 全角は 2、半角は 1" {

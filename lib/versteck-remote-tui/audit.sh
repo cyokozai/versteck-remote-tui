@@ -53,20 +53,20 @@ vrt_screen_audit() {
     return 0
   fi
   while :; do
-    mode=$(vrt_ui_choose --header="監査ログ（最新 $VRT_AUDIT_LIMIT 件まで・新しい順）" -- \
-      "すべて" "失敗だけ" "エージェント名で絞る" "戻る") || return 0
+    mode=$(vrt_ui_choose --header="Audit log (latest $VRT_AUDIT_LIMIT entries, newest first)" -- \
+      "All" "Failures only" "Filter by agent" "Back") || return 0
     case $mode in
-      "すべて") args=() ;;
-      "失敗だけ") args=(--failed) ;;
-      "エージェント名で絞る")
-        agent=$(printf '%s\n' "$data" | vrt_audit_agents | gum filter --placeholder "エージェント名") || continue
+      "All") args=() ;;
+      "Failures only") args=(--failed) ;;
+      "Filter by agent")
+        agent=$(printf '%s\n' "$data" | vrt_audit_agents | gum filter --placeholder "Agent name") || continue
         args=(--agent "$agent")
         ;;
       *) return 0 ;;
     esac
     text=$(printf '%s\n' "$data" | vrt_audit_filter "${args[@]}" | vrt_audit_format)
-    [[ -n $text ]] || text="該当する記録はありません。"
-    printf '監査ログ: %s\n時刻  結果  エージェント  コマンド  詳細\n\n%s\n' "$mode${agent:+ ($agent)}" "$text" | gum pager
+    [[ -n $text ]] || text="No matching entries."
+    printf 'Audit log: %s\nTime  Result  Agent  Command  Detail\n\n%s\n' "$mode${agent:+ ($agent)}" "$text" | gum pager
     agent=""
   done
 }

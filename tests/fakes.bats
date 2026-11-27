@@ -44,7 +44,7 @@ setup() {
 
 @test "偽の gum: confirm は --default=false の形だけを受け、--default false は落とす" {
   gum_answers "yes" "yes"
-  run gum confirm --default=false --affirmative はい --negative いいえ -- "問い"
+  run gum confirm --default=false --affirmative Yes --negative No -- "問い"
   [ "$status" -eq 0 ]
   run gum confirm --default false -- "問い"
   [ "$status" -eq 98 ]
