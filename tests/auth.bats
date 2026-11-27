@@ -28,7 +28,25 @@ teardown() {
   export FAKE_SUDO_MODE=nopasswd
   vrt_auth_init tui
   [ "$VRT_AUTH_MODE" = A ]
-  [[ "$(sudo_log)" == *"[-n] [--] [$VERSTECK_TUI_BACKEND] [interface-version]"* ]]
+  [[ "$(sudo_log)" == *"[-k] [-n] [--] [$VERSTECK_TUI_BACKEND] [interface-version]"* ]]
+  [[ "$(sudo_log)" != *"[-v]"* ]]
+  [ -z "$VRT_KEEPALIVE_PID" ]
+}
+
+@test "同じ端末に sudo の期限が残っていても、判定は期限を無視するので B になり更新が始まる" {
+  export FAKE_SUDO_MODE=password
+  sudo_ticket_valid
+  vrt_auth_init tui
+  [ "$VRT_AUTH_MODE" = B ]
+  [ -n "$VRT_KEEPALIVE_PID" ]
+  [[ "$(sudo_log)" == *"[-k] [-n] [--] [$VERSTECK_TUI_BACKEND] [interface-version]"* ]]
+  vrt_auth_cleanup
+}
+
+@test "sudoers の許可一覧に interface-version があれば、期限が無くても A" {
+  export FAKE_SUDO_MODE=password FAKE_SUDO_NOPASSWD="$VERSTECK_TUI_BACKEND interface-version"
+  vrt_auth_init tui
+  [ "$VRT_AUTH_MODE" = A ]
   [[ "$(sudo_log)" != *"[-v]"* ]]
   [ -z "$VRT_KEEPALIVE_PID" ]
 }

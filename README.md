@@ -59,9 +59,9 @@ versteck-remote-tui help             # 使い方
 
 ## 認証（A と B）
 
-admin は管理ユーザー `versteck-admin` で入ります。このユーザーは Ansible の入口でもあり、sudo にはパスワードが要ります。TUI は起動時に `sudo -n <バックエンド> interface-version` を試し、方式を決めます。
+admin は管理ユーザー `versteck-admin` で入ります。このユーザーは Ansible の入口でもあり、sudo にはパスワードが要ります。TUI は起動時に `sudo -k -n -- <バックエンド> interface-version` を試し、方式を決めます。`-k` で sudo の期限をその 1 回だけ無視するので、同じ端末で先に sudo を使っていても A と取り違えません。
 
-- **A**: sudo -n が通った場合です。versteck 側の sudoers で、バックエンドの決まった引数の形だけがパスワードなしになっています。鍵のログインだけで動きます。
+- **A**: `sudo -k -n` が通った場合です。versteck 側の sudoers で、バックエンドの決まった引数の形だけがパスワードなしになっています。鍵のログインだけで動きます。
 - **B**: A が通らなかった場合です。`sudo -v` でパスワードを 1 回だけ聞き、背景で `sudo -n -v` を 60 秒ごとに呼んで期限を延ばします。TUI の終了（EXIT・INT・TERM）と「シェルへ降りる」で、この更新を止めます。
 
 どちらの方式でも、バックエンドは `sudo -n` で呼びます。パスワードを聞くのは起動時の 1 回だけです。`sudo -v` に失敗したら理由を出し、シェルへ降ります。sudoers の例と、`stop *` のようなワイルドカードの危うさは [docs/interface.md](docs/interface.md) にあります。

@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # 認証の方式の判定と、B の方式での sudo の更新。
-#   A    : sudoers でバックエンドの決まった引数だけがパスワードなし。sudo -n がそのまま通る
+#   A    : sudoers でバックエンドの決まった引数だけがパスワードなし。sudo -k -n（期限を無視）でも通る
 #   B    : sudo -v で 1 回だけパスワードを聞き、背景で sudo -n -v を一定間隔で呼んで期限を延ばす
 #   none : VERSTECK_TUI_SUDO=never。sudo を付けない（テストと root で動かすとき）
 
@@ -31,7 +31,9 @@ vrt_auth_init() {
   case ${VERSTECK_TUI_SUDO:-auto} in
     never) VRT_AUTH_MODE=none ;;
     auto)
-      if sudo -n -- "$be" interface-version >/dev/null 2>&1; then
+      # -k: この 1 回だけ期限（タイムスタンプ）を無視する。同じ端末で先に sudo を使っていても、
+      # sudoers の NOPASSWD で通るときだけ A にする（期限で通ったのを A と取り違えない）
+      if sudo -k -n -- "$be" interface-version >/dev/null 2>&1; then
         VRT_AUTH_MODE=A
       elif [[ $purpose == tui ]] || vrt_is_tty; then
         echo "パスワードなしの sudo では動かせないため、sudo のパスワードを 1 回だけ聞きます。" >&2

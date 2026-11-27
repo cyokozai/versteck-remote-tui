@@ -1,18 +1,24 @@
 #!/usr/bin/env bash
-# 偽の sudo。FAKE_SUDO_MODE で振る舞いを変える。
-#   nopasswd: -n でも通る（A の方式）
-#   password: -v を通るまでは -n が失敗する（B の方式）。FAKE_SUDO_V_FAIL=1 なら -v も失敗
-#   deny    : 何も通らない
+# 偽の sudo。FAKE_SUDO_MODE で sudoers の形を、$FAKE_LOG_DIR/sudo.stamp の有無で期限（タイムスタンプ）を表す。
+#   nopasswd : どのコマンドも期限なしで通る（sudoers ですべて NOPASSWD）
+#   password : 期限が残っている間だけ通る。-v でパスワードを聞いて期限を作る（B の方式）。FAKE_SUDO_V_FAIL=1 なら -v も失敗
+#   deny     : 何も通らない
+# FAKE_SUDO_NOPASSWD : 改行区切りのコマンド行（例「/path/to/backend interface-version」）。
+#                      一致するものは password でも期限なしで通る（A の方式の sudoers の許可一覧）
+# -k をコマンドと一緒に付けると、その 1 回だけ期限を無視する（期限そのものは消さない）。-k だけなら期限を消す。
+# 期限を残した状態から始めるには、テストで sudo.stamp を作る（test_helper の sudo_ticket_valid）。
 line=$(printf ' [%s]' "$@")
 printf 'sudo%s\n' "$line" >>"$FAKE_LOG_DIR/sudo.log"
 mode=${FAKE_SUDO_MODE:-nopasswd}
 stamp="$FAKE_LOG_DIR/sudo.stamp"
 nonint=0
 validate=0
+reset=0
 while (($#)); do
   case $1 in
     -n) nonint=1 ;;
     -v) validate=1 ;;
+    -k) reset=1 ;;
     --)
       shift
       break
@@ -25,15 +31,37 @@ while (($#)); do
   esac
   shift
 done
+
+if ((reset && !validate && $# == 0)); then
+  rm -f "$stamp"
+  exit 0
+fi
+
+listed() {
+  local want="$*" l
+  [[ -n ${FAKE_SUDO_NOPASSWD:-} ]] || return 1
+  while IFS= read -r l; do
+    [[ $l == "$want" ]] && return 0
+  done <<<"$FAKE_SUDO_NOPASSWD"
+  return 1
+}
+
+ticket() {
+  ((reset)) && return 1
+  [[ -e $stamp ]]
+}
+
 allowed() {
   case $mode in
     nopasswd) return 0 ;;
-    password) [[ -e $stamp ]] ;;
+    password) listed "$@" || ticket ;;
     *) return 1 ;;
   esac
 }
+
 if ((validate)); then
-  allowed && exit 0
+  [[ $mode == nopasswd ]] && exit 0
+  if [[ $mode == password ]] && ticket; then exit 0; fi
   ((nonint)) && exit 1
   if [[ ${FAKE_SUDO_V_FAIL:-0} == 1 || $mode != password ]]; then
     echo "sudo: 3 incorrect password attempts" >&2
@@ -42,6 +70,8 @@ if ((validate)); then
   : >"$stamp"
   exit 0
 fi
-allowed && exec "$@"
+if allowed "$@"; then
+  exec "$@"
+fi
 echo "sudo: a password is required" >&2
 exit 1

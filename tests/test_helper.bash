@@ -18,7 +18,7 @@ common_setup() {
   : >"$FAKE_GUM_ANSWERS"
   export FAKE_STATUS_JSON="$FIXTURES/status-ok.json"
   export FAKE_AUDIT_JSONL="$FIXTURES/audit.jsonl"
-  unset SSH_ORIGINAL_COMMAND VERSTECK_REMOTE_TUI_SKIP FAKE_BACKEND_FAIL FAKE_SUDO_MODE FAKE_SUDO_V_FAIL FAKE_INTERFACE_JSON
+  unset SSH_ORIGINAL_COMMAND VERSTECK_REMOTE_TUI_SKIP FAKE_BACKEND_FAIL FAKE_SUDO_MODE FAKE_SUDO_V_FAIL FAKE_SUDO_NOPASSWD FAKE_INTERFACE_JSON
 }
 
 # lib を読み込む（関数を直接試すとき）
@@ -39,6 +39,9 @@ backend_log() { cat "$FAKE_LOG_DIR/backend.log" 2>/dev/null || true; }
 gum_log() { cat "$FAKE_LOG_DIR/gum.log" 2>/dev/null || true; }
 sudo_log() { cat "$FAKE_LOG_DIR/sudo.log" 2>/dev/null || true; }
 pager_out() { cat "$FAKE_LOG_DIR/pager.out" 2>/dev/null || true; }
+
+# 偽の sudo に「同じ端末で先に sudo を使い、期限が残っている」状態を作る
+sudo_ticket_valid() { : >"$FAKE_LOG_DIR/sudo.stamp"; }
 
 # コマンド行が「sleep <秒>」のプロセスの PID を並べる（背景の更新が残っていないかを見る）
 sleep_pids() {
