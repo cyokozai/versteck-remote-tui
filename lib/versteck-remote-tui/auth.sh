@@ -1,7 +1,8 @@
 # shellcheck shell=bash
 # 認証の方式の判定と、B の方式での sudo の更新。
 #   A    : sudoers でバックエンドの決まった引数だけがパスワードなし。sudo -k -n（期限を無視）でも通る
-#   B    : sudo -v で 1 回だけパスワードを聞き、背景で sudo -n -v を一定間隔で呼んで期限を延ばす
+#   B    : sudo -v で 1 回だけパスワードを聞き、背景で sudo -n -v を一定間隔で呼んで期限を延ばす。
+#          間隔（VERSTECK_TUI_SUDO_REFRESH）は sudo の timestamp_timeout より短くする
 #   none : VERSTECK_TUI_SUDO=never。sudo を付けない（テストと root で動かすとき）
 
 VRT_AUTH_MODE=""
@@ -23,6 +24,10 @@ vrt_auth_label() {
 vrt_auth_init() {
   local purpose=${1:-tui} be
   VRT_AUTH_ERROR=""
+  if [[ ! ${VERSTECK_TUI_SUDO_REFRESH:-60} =~ ^[1-9][0-9]*$ ]]; then
+    VRT_AUTH_ERROR="VERSTECK_TUI_SUDO_REFRESH の値が不正です: ${VERSTECK_TUI_SUDO_REFRESH}（1 以上の整数の秒。sudo の timestamp_timeout より短くする）"
+    return 2
+  fi
   be=$(vrt_backend_path)
   if [[ ! -e $be ]]; then
     VRT_AUTH_ERROR="バックエンドが見つかりません: $be（versteck 側で入れるものです。VERSTECK_TUI_BACKEND で場所を変えられます）"
@@ -72,9 +77,10 @@ vrt_check_interface() {
   fi
 }
 
-# 背景で sudo の期限を延ばし続ける。TUI の終了（EXIT/INT/TERM）で止める
+# 背景で sudo の期限を延ばし続ける。TUI の終了（EXIT/INT/TERM）で止める。
+# trap が走らない終わり方（SIGKILL など）に備え、親（TUI）がいなくなったら自分で終わる
 vrt_keepalive_start() {
-  local interval=${VERSTECK_TUI_SUDO_REFRESH:-60}
+  local interval=${VERSTECK_TUI_SUDO_REFRESH:-60} parent=$$
   (
     sp=""
     trap 'if [[ -n $sp ]]; then kill "$sp" 2>/dev/null; fi; exit 0' TERM
@@ -83,6 +89,7 @@ vrt_keepalive_start() {
       sp=$!
       wait "$sp"
       sp=""
+      kill -0 "$parent" 2>/dev/null || exit 0
       sudo -n -v >/dev/null 2>&1 || exit 0
     done
   ) &

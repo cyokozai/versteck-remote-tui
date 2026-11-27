@@ -165,3 +165,41 @@ teardown() {
   [ "$status" -eq 2 ]
   [[ $output == *VERSTECK_TUI_SUDO* ]]
 }
+
+@test "VERSTECK_TUI_SUDO_REFRESH が正の整数でなければ 2 と分かる文" {
+  local v
+  for v in abc 0 -1 1.5 " 5" 07 "5s"; do
+    export VERSTECK_TUI_SUDO_REFRESH="$v"
+    run vrt_run_text status
+    [ "$status" -eq 2 ] || { echo "通ってしまった: [$v]"; return 1; }
+    [[ $output == *VERSTECK_TUI_SUDO_REFRESH* ]]
+  done
+  [ -z "$(sudo_log)" ]
+}
+
+@test "VERSTECK_TUI_SUDO_REFRESH は 1 以上の整数なら通る" {
+  export FAKE_SUDO_MODE=nopasswd VERSTECK_TUI_SUDO_REFRESH=120
+  run vrt_run_text status
+  [ "$status" -eq 0 ]
+}
+
+@test "TUI の親が SIGKILL で消えたら、背景の更新も自分で終わる" {
+  export FAKE_SUDO_MODE=password VERSTECK_TUI_SUDO_REFRESH=1
+  sudo_ticket_valid
+  bash -c '
+    for f in "$1"/lib/versteck-remote-tui/*.sh; do source "$f"; done
+    vrt_keepalive_start
+    echo "$VRT_KEEPALIVE_PID" >"$2"
+    sleep 30' _ "$REPO_ROOT" "$BATS_TEST_TMPDIR/kpid" >/dev/null 2>&1 3>&- &
+  local parent=$! k i
+  for i in $(seq 1 50); do [ -s "$BATS_TEST_TMPDIR/kpid" ] && break; sleep 0.1; done
+  k=$(cat "$BATS_TEST_TMPDIR/kpid")
+  kill -0 "$k"
+  kill -KILL "$parent"
+  for i in $(seq 1 40); do kill -0 "$k" 2>/dev/null || break; sleep 0.1; done
+  if kill -0 "$k" 2>/dev/null; then
+    kill "$k" 2>/dev/null
+    echo "背景の更新 $k が親の死後も残った"
+    return 1
+  fi
+}
