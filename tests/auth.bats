@@ -194,15 +194,17 @@ teardown() {
   local parent=$! k i
   for i in $(seq 1 50); do [ -s "$BATS_TEST_TMPDIR/kpid" ] && break; sleep 0.1; done
   k=$(cat "$BATS_TEST_TMPDIR/kpid")
-  kill -0 "$k"
+  proc_running "$k"
   kill -KILL "$parent"
   # 本番では TUI の親（sshd やログインシェル）が消えた TUI を回収する。テストでは自分で回収する
-  # （回収されていないゾンビには kill -0 が通ってしまう）
   wait "$parent" 2>/dev/null || true
-  for i in $(seq 1 40); do kill -0 "$k" 2>/dev/null || break; sleep 0.1; done
-  if kill -0 "$k" 2>/dev/null; then
+  # 背景の更新は孤児になり、終わっても PID 1 が回収しない環境ではゾンビで残る。ゾンビは終わったとみなす
+  for i in $(seq 1 40); do proc_running "$k" || break; sleep 0.1; done
+  if proc_running "$k"; then
     kill "$k" 2>/dev/null
     echo "背景の更新 $k が親の死後も残った"
     return 1
   fi
+  # 親が残した sleep 30 も片づける
+  for i in $(sleep_pids 30); do kill "$i" 2>/dev/null || true; done
 }

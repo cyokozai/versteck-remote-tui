@@ -80,3 +80,14 @@ sleep_pids() {
   done
   return 0
 }
+
+# プロセスがまだ動いているか。ゾンビ（状態 Z: 終わったが親に回収されていない）は「終わった」とみなす。
+# GitHub Actions の container: のジョブでは PID 1 が孤児を回収しないため、終わった孤児がゾンビとして残り、
+# kill -0 では「動いている」に見える
+proc_running() {
+  local pid=$1 stat state
+  stat=$(cat "/proc/$pid/stat" 2>/dev/null) || return 1
+  state=${stat##*) }
+  state=${state%% *}
+  [[ $state != Z && $state != X ]]
+}

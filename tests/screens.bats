@@ -1,6 +1,9 @@
 #!/usr/bin/env bats
 # 覗く・止め方の手順・シェルへ降りる・メニュー
 
+# run --separate-stderr などフラグ付きの run を使う
+bats_require_minimum_version 1.5.0
+
 setup() {
   load test_helper
   common_setup
