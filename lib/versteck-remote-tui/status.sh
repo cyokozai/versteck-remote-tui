@@ -64,7 +64,7 @@ vrt_screen_status() {
       return 0
     fi
     printf '状態の一覧（取得 %s）\n\n%s\n' "$(date '+%H:%M:%S')" "$text" | gum pager
-    next=$(gum choose --header "状態の一覧" "再読み込み" "戻る") || return 0
+    next=$(vrt_ui_choose --header="状態の一覧" -- "再読み込み" "戻る") || return 0
     [[ $next == "再読み込み" ]] || return 0
   done
 }

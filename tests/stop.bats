@@ -104,3 +104,25 @@ EOF
   [[ $output == *"動いているエージェントのセッションはありません"* ]]
   [[ "$(backend_log)" != *"[stop]"* ]]
 }
+
+@test "止めた結果が - で始まっても、そのまま見せる（gum の引数と取り違えない）" {
+  gum_answers "claude-1" "yes"
+  cat >"$BATS_TEST_TMPDIR/backend" <<EOF
+#!/usr/bin/env bash
+if [[ \$1 == stop ]]; then printf -- '--all stopped\n- claude-1\n'; exit 0; fi
+exec "$FIXTURES/fake-backend" "\$@"
+EOF
+  chmod +x "$BATS_TEST_TMPDIR/backend"
+  export VERSTECK_TUI_BACKEND="$BATS_TEST_TMPDIR/backend"
+  run vrt_screen_stop
+  [ "$status" -eq 0 ]
+  [[ $output == *"止めました"* ]]
+  [[ $output == *"--all stopped"* ]]
+  [[ $output != *"fake gum"* ]]
+}
+
+@test "確認は --default=false（既定は「いいえ」）と、はい・いいえの文言で聞く" {
+  gum_answers "claude-1" "no"
+  run vrt_screen_stop
+  grep -qF 'gum [confirm] [--default=false] [--affirmative] [はい] [--negative] [いいえ] [--]' "$FAKE_LOG_DIR/gum.log"
+}

@@ -8,10 +8,10 @@ vrt_screen_peek() {
   json=$(vrt_fetch_status) || return 0
   mapfile -t names < <(printf '%s\n' "$json" | vrt_session_names)
   if ((${#names[@]} == 0)); then
-    gum style "動いているエージェントのセッションはありません。"
+    vrt_ui_say "動いているエージェントのセッションはありません。"
     return 0
   fi
-  name=$(gum choose --header "覗くセッションを選んでください（読み取り専用）" "${names[@]}" "戻る") || return 0
+  name=$(vrt_ui_choose --header="覗くセッションを選んでください（読み取り専用）" -- "${names[@]}" "戻る") || return 0
   [[ $name != "戻る" ]] || return 0
   vrt_valid_session_name "$name" || return 0
   while :; do
@@ -25,7 +25,7 @@ vrt_screen_peek() {
       printf 'セッション %s の画面（読み取り専用・取得 %s）\n\n' "$name" "$(date '+%H:%M:%S')"
       printf '%s\n' "$out" | vrt_sanitize_text
     } | gum pager
-    next=$(gum choose --header "セッション $name" "再読み込み" "戻る") || return 0
+    next=$(vrt_ui_choose --header="セッション $name" -- "再読み込み" "戻る") || return 0
     [[ $next == "再読み込み" ]] || return 0
   done
 }

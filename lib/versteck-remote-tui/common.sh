@@ -13,6 +13,17 @@ vrt_have_command() {
   command -v "$1" >/dev/null 2>&1
 }
 
+# vrt_join <区切り> <語...>: 語を区切りでつなぐ
+vrt_join() {
+  local sep=$1 out=$2
+  shift 2
+  while (($#)); do
+    out+="$sep$1"
+    shift
+  done
+  printf '%s\n' "$out"
+}
+
 vrt_valid_session_name() {
   [[ $1 =~ $VRT_SESSION_RE ]]
 }

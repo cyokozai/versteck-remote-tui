@@ -74,11 +74,13 @@ EOF
   [[ $output == *"SHELL-EXEC skip=1 keepalive=none"* ]]
 }
 
-@test "シェルへ降りる: 「いいえ」なら降りない" {
+@test "シェルへ降りる: 「いいえ」なら降りず、降りなかったと出す" {
   vrt__exec_login_shell() { echo "SHELL-EXEC"; }
   gum_answers "no"
   run vrt_screen_shell
+  [ "$status" -eq 0 ]
   [[ $output != *SHELL-EXEC* ]]
+  [[ $output == *"シェルへ降りませんでした。"* ]]
 }
 
 @test "メニュー: 上部に認証の方式を出し、終了で 0" {
@@ -118,4 +120,70 @@ EOF
   run vrt_main
   [[ $output == *"gum が見つかりません"* ]]
   [[ $output == *SHELL-EXEC* ]]
+}
+
+@test "失敗の文言が - で始まっても出せる" {
+  run vrt_ui_error "-x から始まる失敗"
+  [ "$status" -eq 0 ]
+  [[ $output == *"-x から始まる失敗"* ]]
+  [[ $output != *"fake gum"* ]]
+}
+
+@test "メニュー: Ctrl-C（gum の中断）は 130 で終わる" {
+  vrt_is_tty() { return 0; }
+  gum_answers "<ctrl-c>"
+  run vrt_main
+  [ "$status" -eq 130 ]
+}
+
+@test "メニュー: Esc は「終了」と同じく 0 で終わる" {
+  vrt_is_tty() { return 0; }
+  gum_answers "<esc>"
+  run vrt_main
+  [ "$status" -eq 0 ]
+}
+
+@test "メニュー: 画面の中の Ctrl-C はメニューに戻るだけ" {
+  vrt_is_tty() { return 0; }
+  gum_answers "状態の一覧" "<ctrl-c>" "終了"
+  run vrt_main
+  [ "$status" -eq 0 ]
+}
+
+@test "選択の Esc で gum が残す「nothing selected」の 1 行を、端末なら消す" {
+  vrt_stderr_is_tty() { return 0; }
+  gum_answers "<esc>"
+  run --separate-stderr vrt_ui_choose --header h -- a b
+  [ "$status" -eq 1 ]
+  [ "$stderr" = "nothing selected"$'\n\e[1A\e[2K' ]
+}
+
+@test "選択の Esc でも、端末でなければ何も足さない。Ctrl-C でも消さない" {
+  gum_answers "<esc>" "<ctrl-c>"
+  run --separate-stderr vrt_ui_choose --header h -- a b
+  [ "$status" -eq 1 ]
+  [ "$stderr" = "nothing selected" ]
+  vrt_stderr_is_tty() { return 0; }
+  run --separate-stderr vrt_ui_choose --header h -- a b
+  [ "$status" -eq 130 ]
+  [[ $stderr != *$'\e'* ]]
+}
+
+@test "メニュー: jq だけが無ければ、jq が無いと出す（gum が無いとは言わない）" {
+  vrt_is_tty() { return 0; }
+  vrt__exec_login_shell() { echo "SHELL-EXEC"; }
+  vrt_have_command() { [[ $1 != jq ]]; }
+  run vrt_main
+  [[ $output == *"jq が見つかりません"* ]]
+  [[ $output != *"gum が見つかりません"* ]]
+  [[ $output != *"gum と"* ]]
+  [[ $output == *SHELL-EXEC* ]]
+}
+
+@test "メニュー: gum も jq も無ければ両方の名前を出す" {
+  vrt_is_tty() { return 0; }
+  vrt__exec_login_shell() { echo "SHELL-EXEC"; }
+  vrt_have_command() { [[ $1 != jq && $1 != gum ]]; }
+  run vrt_main
+  [[ $output == *"gum と jq が見つかりません"* ]]
 }

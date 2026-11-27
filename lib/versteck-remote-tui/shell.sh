@@ -5,8 +5,11 @@ VRT_SHELL_NOTICE="シェルへ降ります。ここから先の操作は TUI を
 sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立てます。"
 
 vrt_screen_shell() {
-  gum style --border normal --padding "0 1" "$VRT_SHELL_NOTICE"
-  vrt_ui_confirm "シェルへ降りますか？" || return 0
+  gum style --border normal --padding "0 1" -- "$VRT_SHELL_NOTICE"
+  if ! vrt_ui_confirm "シェルへ降りますか？"; then
+    vrt_ui_say "シェルへ降りませんでした。"
+    return 0
+  fi
   vrt_drop_to_shell
 }
 

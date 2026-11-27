@@ -65,7 +65,9 @@ setup() {
 }
 
 @test "監査ログの画面: 該当なしならその旨を出す" {
-  gum_answers "エージェント名で絞る" "nobody" "戻る"
+  printf '%s\n' '{"time":"2026-11-27T00:10:00Z","agent":"muse","command":"ls","result":"ok"}' >"$BATS_TEST_TMPDIR/ok.jsonl"
+  export FAKE_AUDIT_JSONL="$BATS_TEST_TMPDIR/ok.jsonl"
+  gum_answers "失敗だけ" "戻る"
   run vrt_screen_audit
   [[ "$(pager_out)" == *"該当する記録はありません"* ]]
 }

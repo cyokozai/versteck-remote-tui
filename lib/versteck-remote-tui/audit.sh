@@ -50,7 +50,7 @@ vrt_screen_audit() {
     return 0
   fi
   while :; do
-    mode=$(gum choose --header "監査ログ（最新 $VRT_AUDIT_LIMIT 件まで・新しい順）" \
+    mode=$(vrt_ui_choose --header="監査ログ（最新 $VRT_AUDIT_LIMIT 件まで・新しい順）" -- \
       "すべて" "失敗だけ" "エージェント名で絞る" "戻る") || return 0
     case $mode in
       "すべて") args=() ;;

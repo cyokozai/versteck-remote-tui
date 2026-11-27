@@ -95,14 +95,32 @@ teardown() {
   [[ "$(sudo_log)" == *"sudo [-n] [-v]"* ]]
 }
 
-@test "TUI を抜けると背景の更新は残らない（EXIT の trap）" {
+@test "TUI を抜けると背景の更新は残らない（「終了」の後始末）" {
   export FAKE_SUDO_MODE=password
+  gum_answers "終了"
   run bash -c '
     for f in "$1"/lib/versteck-remote-tui/*.sh; do source "$f"; done
     vrt_is_tty() { return 0; }
     vrt_main' _ "$REPO_ROOT"
   [ "$status" -eq 0 ]
   [[ "$(gum_log)" == *"認証: B"* ]]
+  sleep 0.3
+  [ -z "$(sleep_pids 37)" ]
+}
+
+@test "後始末を通らずにプロセスが終わっても、EXIT の trap で背景の更新は残らない" {
+  export FAKE_SUDO_MODE=password
+  gum_answers "状態の一覧"
+  # 画面の途中で exit する（vrt_tui の後始末の行には届かない）。
+  # trap が効かないと背景の更新が出力を握ったまま残るので、run ではなくファイルに受けて待たずに進む
+  local rc=0
+  bash -c '
+    for f in "$1"/lib/versteck-remote-tui/*.sh; do source "$f"; done
+    vrt_is_tty() { return 0; }
+    vrt_screen_status() { echo "KEEPALIVE=$VRT_KEEPALIVE_PID"; exit 7; }
+    vrt_main' _ "$REPO_ROOT" >"$BATS_TEST_TMPDIR/out" 2>&1 3>&- || rc=$?
+  [ "$rc" -eq 7 ]
+  grep -q 'KEEPALIVE=[0-9]' "$BATS_TEST_TMPDIR/out"
   sleep 0.3
   [ -z "$(sleep_pids 37)" ]
 }
