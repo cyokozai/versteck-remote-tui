@@ -4,7 +4,8 @@
 set -o pipefail
 
 vrt_self=$(readlink -f -- "${BASH_SOURCE[0]}")
-VRT_LIBDIR=${VRT_LIBDIR:-"$(dirname -- "$vrt_self")/../lib/versteck-remote-tui"}
+# lib の場所は、このスクリプトの置き場所からだけ決める（環境変数で差し替えさせない）
+VRT_LIBDIR="$(dirname -- "$vrt_self")/../lib/versteck-remote-tui"
 if [[ ! -r $VRT_LIBDIR/main.sh ]]; then
   echo "versteck-remote-tui: lib が見つかりません: $VRT_LIBDIR" >&2
   exit 1

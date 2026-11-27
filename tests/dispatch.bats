@@ -104,3 +104,19 @@ setup() {
   [ "$status" -eq 0 ]
   [[ $output == versteck-remote-tui* ]]
 }
+
+@test "help に余計な引数があれば 2" {
+  run "$BIN" help foo
+  [ "$status" -eq 2 ]
+  run "$BIN" --help x
+  [ "$status" -eq 2 ]
+}
+
+@test "VRT_LIBDIR を環境変数で渡しても、読み込む lib は変わらない" {
+  mkdir -p "$BATS_TEST_TMPDIR/evil"
+  printf 'vrt_main() { echo PWNED; }\n' >"$BATS_TEST_TMPDIR/evil/main.sh"
+  VRT_LIBDIR="$BATS_TEST_TMPDIR/evil" run "$BIN" version
+  [ "$status" -eq 0 ]
+  [[ $output == versteck-remote-tui* ]]
+  [[ $output != *PWNED* ]]
+}

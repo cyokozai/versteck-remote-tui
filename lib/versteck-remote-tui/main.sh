@@ -64,6 +64,7 @@ vrt_run_text() {
       printf 'versteck-remote-tui %s (interface %s)\n' "$VRT_VERSION" "$VRT_INTERFACE_VERSION"
       ;;
     help | -h | --help)
+      (($# == 0)) || { vrt_usage >&2; return 2; }
       vrt_usage
       ;;
     status)
