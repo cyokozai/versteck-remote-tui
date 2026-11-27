@@ -187,3 +187,42 @@ EOF
   run vrt_main
   [[ $output == *"gum と jq が見つかりません"* ]]
 }
+
+@test "覗く: 名前の形が合わないセッションの件数を出す" {
+  echo '{"sessions":[{"name":"bad;rm"},{"name":"claude-1"}]}' >"$BATS_TEST_TMPDIR/bad.json"
+  export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/bad.json"
+  gum_answers "戻る"
+  run vrt_screen_peek
+  [[ $output == *"名前の形が合わないセッションが 1 件あり、一覧に出していません"* ]]
+}
+
+@test "覗く: status の JSON が壊れていれば取得の失敗と出す" {
+  printf 'not json\n' >"$BATS_TEST_TMPDIR/broken.json"
+  export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/broken.json"
+  run vrt_screen_peek
+  [[ $output == *"セッションの一覧を取得できませんでした"* ]]
+  [[ $output != *"ありません"* ]]
+}
+
+@test "表示幅の数え方: 全角は 2、半角は 1" {
+  [ "$(display_width "abc")" -eq 3 ]
+  [ "$(display_width "あa")" -eq 3 ]
+  [ "$(display_width "（「・」）？")" -eq 12 ]
+}
+
+@test "シェルへ降りる: 注意書きの各行は 80 桁の端末の枠に収まる" {
+  assert_box_fits_80 "$VRT_SHELL_NOTICE"
+}
+
+@test "枠（--border）に入れる文言はすべて幅の検査にかけている" {
+  local checked=" VRT_STOP_NOTICE VRT_SHELL_NOTICE " v n=0 lines
+  lines=$(grep -h -e '--border' "$REPO_ROOT"/lib/versteck-remote-tui/*.sh)
+  [ -n "$lines" ]
+  while IFS= read -r v; do
+    n=$((n + 1))
+    [[ $checked == *" $v "* ]] || { echo "幅を検査していない枠: $v"; return 1; }
+  done < <(printf '%s
+' "$lines" | grep -o '"\$[A-Z_]*"' | tr -d '"$')
+  [ "$n" -eq "$(printf '%s
+' "$lines" | wc -l)" ]
+}

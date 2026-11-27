@@ -4,14 +4,13 @@
 
 vrt_screen_peek() {
   local json name out rc next
-  local -a names
   json=$(vrt_fetch_status) || return 0
-  mapfile -t names < <(printf '%s\n' "$json" | vrt_session_names)
-  if ((${#names[@]} == 0)); then
-    vrt_ui_say "動いているエージェントのセッションはありません。"
+  vrt_load_sessions "$json" || return 0
+  if ((${#VRT_SESSION_NAMES[@]} == 0)); then
+    ((VRT_SESSION_REJECTED > 0)) || vrt_ui_say "動いているエージェントのセッションはありません。"
     return 0
   fi
-  name=$(vrt_ui_choose --header="覗くセッションを選んでください（読み取り専用）" -- "${names[@]}" "戻る") || return 0
+  name=$(vrt_ui_choose --header="覗くセッションを選んでください（読み取り専用）" -- "${VRT_SESSION_NAMES[@]}" "戻る") || return 0
   [[ $name != "戻る" ]] || return 0
   vrt_valid_session_name "$name" || return 0
   while :; do

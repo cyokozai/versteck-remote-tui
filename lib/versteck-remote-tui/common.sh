@@ -59,11 +59,19 @@ vrt_text_exit_code() {
   esac
 }
 
-# 端末の制御列を落とす（改行とタブは残す）。バックエンドの出力をそのまま端末に流さないため
+# 端末の制御列を落とす（改行とタブは残す）。バックエンドの出力をそのまま端末に流さないため。
+#   tr  : C0 制御文字と DEL（1 バイト）
+#   sed : UTF-8 で 2〜3 バイトになるもの。C1 制御文字（U+0080〜U+009F、U+009B は CSI として働く端末がある）と、
+#         文字の向きを変える制御文字（U+061C、U+200E、U+200F、U+202A〜U+202E、U+2066〜U+2069）
+#   LC_ALL=C でバイトとして扱う。C2・D8・E2 は UTF-8 の先頭のバイトにしか現れないので、ほかの文字の途中には当たらない
 vrt_sanitize_text() {
-  LC_ALL=C tr -d '\000-\010\013-\037\177'
+  LC_ALL=C tr -d '\000-\010\013-\037\177' |
+    LC_ALL=C sed -e $'s/\xc2[\x80-\x9f]//g' \
+      -e $'s/\xd8\x9c//g' \
+      -e $'s/\xe2\x80[\x8e\x8f\xaa-\xae]//g' \
+      -e $'s/\xe2\x81[\xa6-\xa9]//g'
 }
 
-# jq の中で使う、制御文字を ? に置き換える関数
+# jq の中で使う、制御文字を ? に置き換える関数（落とす文字は vrt_sanitize_text と同じ）
 # shellcheck disable=SC2016  # jq の式なので展開しない
-VRT_JQ_CLEAN='def clean: tostring | gsub("[\u0000-\u001f\u007f]"; "?");'
+VRT_JQ_CLEAN='def clean: tostring | gsub("[\u0000-\u001f\u007f-\u009f\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]"; "?");'

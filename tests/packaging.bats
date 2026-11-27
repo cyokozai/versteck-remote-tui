@@ -61,3 +61,15 @@ real_gum() {
   run make -s -C "$REPO_ROOT" dist VERSION=1.2 DIST_DIR="$BATS_TEST_TMPDIR/dist"
   [ "$status" -ne 0 ]
 }
+
+@test "本物の gum style の枠は 80 桁に収まる（止める画面・シェルへ降りる画面の注意書き）" {
+  local g l
+  g=$(real_gum) || skip "gum が無い"
+  load_libs
+  local text
+  for text in "$VRT_STOP_NOTICE" "$VRT_SHELL_NOTICE"; do
+    while IFS= read -r l; do
+      (($(display_width "$l") <= 80)) || { echo "80 桁を超えた: $l"; return 1; }
+    done < <("$g" style --border normal --padding "0 1" -- "$text")
+  done
+}

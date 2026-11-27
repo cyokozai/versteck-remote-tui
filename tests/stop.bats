@@ -97,13 +97,68 @@ EOF
   [[ $output == *"対象が見つかりません"* ]]
 }
 
-@test "検査を通らない名前はバックエンドに渡さない" {
-  echo '{"sessions":[{"name":"bad;rm"}]}' >"$BATS_TEST_TMPDIR/bad.json"
+@test "検査を通らない名前はバックエンドに渡さず、弾いた件数を出す" {
+  echo '{"sessions":[{"name":"bad;rm"},{"name":"claude-1"},{"agent":"noname"}]}' >"$BATS_TEST_TMPDIR/bad.json"
   export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/bad.json"
+  gum_answers "戻る"
   run vrt_screen_stop
-  [[ $output == *"動いているエージェントのセッションはありません"* ]]
+  [ "$status" -eq 0 ]
+  [[ $output == *"名前の形が合わないセッションが 2 件あり、一覧に出していません"* ]]
+  [[ $output != *"動いているエージェントのセッションはありません"* ]]
+  grep '^gum \[choose\]' "$FAKE_LOG_DIR/gum.log" | grep -qF '[claude-1] [すべて止める] [戻る]'
+  [[ "$(grep '^gum \[choose\]' "$FAKE_LOG_DIR/gum.log")" != *"bad;rm"* ]]
   [[ "$(backend_log)" != *"[stop]"* ]]
 }
+
+@test "一覧に出せる名前が 0 件でも「すべて止める」を選べる" {
+  echo '{"sessions":[{"name":"bad;rm"}]}' >"$BATS_TEST_TMPDIR/bad.json"
+  export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/bad.json"
+  gum_answers "すべて止める" "yes"
+  run vrt_screen_stop
+  [ "$status" -eq 0 ]
+  [[ $output == *"名前の形が合わないセッションが 1 件"* ]]
+  [[ "$(backend_log)" == *"[stop] [--all]"* ]]
+  [[ "$(gum_log)" == *"1 件すべて止めますか？"*"（名前の形が合わない 1 件を含みます）"* ]]
+}
+
+@test "セッションが 0 件でも「すべて止める」を選べる" {
+  echo '{"sessions":[]}' >"$BATS_TEST_TMPDIR/empty.json"
+  export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/empty.json"
+  gum_answers "すべて止める" "yes"
+  run vrt_screen_stop
+  [ "$status" -eq 0 ]
+  [[ $output == *"動いているエージェントのセッションはありません"* ]]
+  [[ "$(backend_log)" == *"[stop] [--all]"* ]]
+}
+
+@test "status の JSON が壊れている・sessions が無いときは「ありません」ではなく取得の失敗と出す" {
+  local j
+  for j in 'not json' '{}' '{"sessions":"x"}'; do
+    printf '%s\n' "$j" >"$BATS_TEST_TMPDIR/broken.json"
+    export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/broken.json"
+    : >"$FAKE_LOG_DIR/gum.log"
+    run vrt_screen_stop
+    [ "$status" -eq 0 ]
+    assert_notice
+    [[ $output == *"セッションの一覧を取得できませんでした"* ]] || { echo "文が無い: $j"; return 1; }
+    [[ $output != *"ありません"* ]]
+    [ -z "$(grep '^gum \[choose\]' "$FAKE_LOG_DIR/gum.log")" ]
+  done
+}
+
+@test "注意書きの各行は 80 桁の端末の枠に収まる" {
+  assert_box_fits_80 "$VRT_STOP_NOTICE"
+}
+
+@test "「すべて止める」の問いの各行も 80 桁に収まる（件数が 4 桁でも）" {
+  VRT_SESSION_TOTAL=0 VRT_SESSION_REJECTED=0
+  assert_box_fits_80 "$(vrt_stop_all_question)"
+  VRT_SESSION_TOTAL=9999 VRT_SESSION_REJECTED=9999
+  assert_box_fits_80 "$(vrt_stop_all_question)"
+  VRT_SESSION_TOTAL=9999 VRT_SESSION_REJECTED=0
+  assert_box_fits_80 "$(vrt_stop_all_question)"
+}
+
 
 @test "止めた結果が - で始まっても、そのまま見せる（gum の引数と取り違えない）" {
   gum_answers "claude-1" "yes"

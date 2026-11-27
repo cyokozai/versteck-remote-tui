@@ -20,11 +20,14 @@ vrt_audit_filter() {
     esac
     shift
   done
-  jq -nR --argjson failed "$failed" --arg agent "$agent" '
+  # --agent は、選択肢に出した名前（vrt_audit_agents が clean したもの）と同じ形で比べる。
+  # 並びは time の文字列の新しい順。time が文字列でない・無い記録は末尾に回す
+  jq -nR --argjson failed "$failed" --arg agent "$agent" "$VRT_JQ_CLEAN"'
     [inputs | fromjson? | select(type == "object")]
     | map(select(($failed | not) or (.result != "ok")))
-    | map(select($agent == "" or .agent == $agent))
-    | sort_by(.time | tostring) | reverse'
+    | map(select($agent == "" or ((.agent | type) == "string" and (.agent | clean) == $agent)))
+    | sort_by([(.time | type) == "string", (.time | if type == "string" then . else "" end)])
+    | reverse'
 }
 
 # vrt_audit_filter の配列を 1 件 1 行にする: 時刻  結果  エージェント  コマンド  詳細

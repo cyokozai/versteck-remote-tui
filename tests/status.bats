@@ -122,3 +122,37 @@ setup() {
   [[ $output == *"取得できませんでした"* ]]
   [ -z "$(pager_out)" ]
 }
+
+@test "vrt_sanitize_text は C1 制御文字と向きを変える制御文字も落とし、日本語は残す" {
+  local in out
+  in=$(printf 'あ\xc2\x9b2Jい\xe2\x80\xaeう\xe2\x80\xaa\xe2\x80\x8e\xe2\x80\x8f\xe2\x81\xa6\xe2\x81\xa9\xd8\x9c\xc2\x80\xc2\x9fえ\xc2\xa0お')
+  out=$(printf '%s' "$in" | vrt_sanitize_text)
+  [ "$out" = $'あ2Jいうえ\xc2\xa0お' ]
+}
+
+@test "jq の clean は C1 制御文字と向きを変える制御文字を ? にする" {
+  run jq -r "$VRT_JQ_CLEAN"' .[] | clean' <<<'["a\u009bb\u202ec", "\u0080\u009f\u061c\u200e\u200f\u202a\u2066\u2069", "日本語\u00a0ok"]'
+  [ "${lines[0]}" = "a?b?c" ]
+  [ "${lines[1]}" = "????????" ]
+  [ "${lines[2]}" = $'日本語\xc2\xa0ok' ]
+}
+
+@test "状態の一覧の整形でも U+009B と U+202E を出さない" {
+  run vrt_format_status_text <<<'{"host":"ex\u009b2Jample\u202e"}'
+  [[ $output == *"ホスト: ex?2Jample?"* ]]
+}
+
+@test "vrt_session_total は sessions の件数を返し、配列でなければ・JSON でなければ失敗する" {
+  run vrt_session_total <<<'{"sessions":[{"name":"ok-1"},{"name":"bad;name"},"x"]}'
+  [ "$status" -eq 0 ]
+  [ "$output" = 3 ]
+  run vrt_session_total <<<'{"sessions":[]}'
+  [ "$status" -eq 0 ]
+  [ "$output" = 0 ]
+  run vrt_session_total <<<'{}'
+  [ "$status" -ne 0 ]
+  run vrt_session_total <<<'{"sessions":"x"}'
+  [ "$status" -ne 0 ]
+  run vrt_session_total <<<'not json'
+  [ "$status" -ne 0 ]
+}

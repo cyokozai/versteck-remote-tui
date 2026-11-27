@@ -85,3 +85,28 @@ setup() {
   [[ "$(backend_log)" == *"[audit] [--json] [--limit] [2]"* ]]
   [[ "${lines[0]}" == 2026-11-27T00:40:00Z* ]]
 }
+
+@test "time の無い記録は新しい順の末尾に回す" {
+  result=$(printf '%s\n' '{"time":"2026-11-27T00:10:00Z","command":"a"}' '{"command":"no-time"}' \
+    '{"time":"2026-11-27T00:20:00Z","command":"b"}' '{"time":7,"command":"num-time"}' |
+    vrt_audit_filter | jq -r '.[].command' | paste -sd,)
+  [ "$result" = "b,a,no-time,num-time" ] || [ "$result" = "b,a,num-time,no-time" ]
+}
+
+@test "エージェント名の絞り込みは、選択肢に出した名前（制御文字を ? にしたもの）と比べる" {
+  local data='{"time":"t1","agent":"ev\u001bil","command":"x","result":"ok"}'
+  run vrt_audit_agents <<<"$data"
+  [ "$output" = "ev?il" ]
+  result=$(vrt_audit_filter --agent "ev?il" <<<"$data" | jq -r '.[].command' | paste -sd,)
+  [ "$result" = "x" ]
+}
+
+@test "監査ログの画面: 制御文字を含むエージェント名を選んでも、その記録が出る" {
+  printf '%s\n' '{"time":"t1","agent":"ev\u001bil","command":"evil-cmd","result":"ok"}' \
+    '{"time":"t2","agent":"muse","command":"ls","result":"ok"}' >"$BATS_TEST_TMPDIR/a.jsonl"
+  export FAKE_AUDIT_JSONL="$BATS_TEST_TMPDIR/a.jsonl"
+  gum_answers "エージェント名で絞る" "ev?il" "戻る"
+  run vrt_screen_audit
+  [[ "$(pager_out)" == *"evil-cmd"* ]]
+  [[ "$(pager_out)" != *"  ls"* ]]
+}

@@ -43,6 +43,35 @@ vrt_session_names() {
     done
 }
 
+# status --json の JSON（標準入力）の sessions の件数（形が合わない名前も数える）。
+# JSON でない・sessions が配列でないときは失敗する
+vrt_session_total() {
+  jq -e '.sessions | if type == "array" then length else error("sessions は配列ではありません") end' 2>/dev/null
+}
+
+VRT_SESSIONS_UNREADABLE="セッションの一覧を取得できませんでした（status --json が JSON でないか、sessions が配列になっていません）。"
+
+# vrt_load_sessions <status の JSON>
+# VRT_SESSION_NAMES（検査を通る名前）・VRT_SESSION_TOTAL・VRT_SESSION_REJECTED（弾いた件数）を決める。
+# 弾いたものがあればその件数を画面に出す。一覧を読めなければ文言を出して非 0
+vrt_load_sessions() {
+  local json=$1
+  VRT_SESSION_NAMES=()
+  VRT_SESSION_TOTAL=0
+  VRT_SESSION_REJECTED=0
+  if ! VRT_SESSION_TOTAL=$(printf '%s\n' "$json" | vrt_session_total); then
+    VRT_SESSION_TOTAL=0
+    vrt_ui_error "$VRT_SESSIONS_UNREADABLE"
+    return 1
+  fi
+  mapfile -t VRT_SESSION_NAMES < <(printf '%s\n' "$json" | vrt_session_names)
+  VRT_SESSION_REJECTED=$((VRT_SESSION_TOTAL - ${#VRT_SESSION_NAMES[@]}))
+  if ((VRT_SESSION_REJECTED > 0)); then
+    vrt_ui_say "名前の形が合わないセッションが $VRT_SESSION_REJECTED 件あり、一覧に出していません。"
+  fi
+  return 0
+}
+
 # バックエンドから status を取る。失敗したら文言を出して非 0
 vrt_fetch_status() {
   local json rc
