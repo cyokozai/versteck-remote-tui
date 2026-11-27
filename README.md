@@ -19,6 +19,8 @@ versteck は VM に AI エージェント（Claude Code・Muse など）を住�
 
 Ansible の再実行と PR の一覧は、この TUI には入れません。
 
+画面ごとの見た目（端末の文字そのまま）と、どの操作でどの画面へ移るかは [docs/screens.md](docs/screens.md) にあります。各画面に、実際に操作した録画（GIF とテキスト）を付けています。
+
 ## 使い方
 
 ```
@@ -125,6 +127,16 @@ make test TEST_BASE=<手元の image>     # 土台を差し替える
 - `make check` は shellcheck と bats を走らせます（CI もコンテナの中でこれを呼びます）。
 - 対話の画面は PATH の先頭に置いた偽の `gum`（引数を記録し、決めた答えを返す）と偽の `sudo`・偽のバックエンド（`tests/fixtures/`）で流れを試します。本物の gum は非対話で動く `gum format` と `gum style` の煙試験だけに使います。
 - gum を呼ぶ部分（`vrt_screen_*`）と、JSON の整形・絞り込みなどの純粋な処理（`vrt_format_status_text`・`vrt_audit_filter` など）を分け、後者を bats で直接試します。
+
+### 画面の録画
+
+```sh
+make screens                                   # docs/tapes/*.tape を全部流し、docs/screens/ を作り直す
+make screens TAPES=docs/tapes/stop-one.tape    # 1 本だけ
+```
+
+- VHS の端末で、本物の gum 0.17.0 と偽のバックエンドを使って TUI を操作し、GIF とテキストを残します。VHS・gum・日本語の書体は `Dockerfile.vhs` の image に入れ、手元には入れません。
+- 画面の文言や遷移を変えたら、`make screens` で録り直し、[docs/screens.md](docs/screens.md) の画面の文字と遷移の表を合わせてください。`make check` の `tests/docs_screens.bats` が、メニューの項目と注意書きが録画と文書の両方にあるかを確かめます。
 
 ## ライセンス
 

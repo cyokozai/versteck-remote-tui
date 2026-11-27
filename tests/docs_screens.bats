@@ -25,6 +25,7 @@ tapes() {
     grep -qx "Output docs/screens/$name.gif" "$TAPES/$name.tape"
     grep -qx "Output docs/screens/$name.txt" "$TAPES/$name.tape"
     grep -qx "Source docs/tapes/_settings.tape" "$TAPES/$name.tape"
+    grep -qx "Source docs/tapes/_env.tape" "$TAPES/$name.tape"
   done < <(tapes)
   ((n > 0))
 }
@@ -65,11 +66,13 @@ tapes() {
 }
 
 @test "シェルへ降りる画面の注意書き（実装の VRT_SHELL_NOTICE）が録画と docs/screens.md に出る" {
+  # 2 行目は 100 桁を超えて端末で折り返す（docs/screens.md の「実装との食い違い」の 1）。
+  # 折り返しても残る各行の先頭 20 文字で照合する
   load_libs
   local line
   while IFS= read -r line; do
-    grep -qF "$line" "$SHOTS/shell.txt"
-    grep -qF "$line" "$DOC"
+    grep -qF "${line:0:20}" "$SHOTS/shell.txt"
+    grep -qF "${line:0:20}" "$DOC"
   done <<<"$VRT_SHELL_NOTICE"
 }
 

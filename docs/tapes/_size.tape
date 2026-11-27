@@ -4,6 +4,7 @@
 # 期待: 「30 100」（30 行 × 100 桁）
 Output "/tmp/vrs-size.txt"
 Source docs/tapes/_settings.tape
+Source docs/tapes/_env.tape
 Type "stty size"
 Enter
 Sleep 0.5s

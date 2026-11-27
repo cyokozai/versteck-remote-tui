@@ -11,7 +11,7 @@ VHS_BASE   ?= ghcr.io/charmbracelet/vhs:v0.10.0
 VHS_IMAGE  ?= versteck-remote-tui-vhs:local
 
 LIBS    := $(wildcard lib/$(NAME)/*.sh)
-SCRIPTS := bin/$(NAME) tests/fixtures/fake-backend $(wildcard tests/fixtures/bin/*) tests/test_helper.bash
+SCRIPTS := bin/$(NAME) tests/fixtures/fake-backend $(wildcard tests/fixtures/bin/*) tests/test_helper.bash docs/tapes/record.sh
 
 .PHONY: test check lint unit install dist clean screens
 
@@ -39,7 +39,7 @@ unit:
 TAPES ?= $(filter-out docs/tapes/_%,$(wildcard docs/tapes/*.tape))
 screens:
 	docker build --build-arg VHS_IMAGE=$(VHS_BASE) -t $(VHS_IMAGE) -f Dockerfile.vhs .
-	docker run --rm -v "$(CURDIR):/src" -w /src --entrypoint docs/tapes/record.sh $(VHS_IMAGE) $(TAPES)
+	docker run --rm --hostname example-vm -v "$(CURDIR):/src" -w /src --entrypoint docs/tapes/record.sh $(VHS_IMAGE) $(TAPES)
 
 install:
 	install -d "$(DESTDIR)$(PREFIX)/bin" "$(DESTDIR)$(PREFIX)/lib/$(NAME)" "$(DESTDIR)$(PREFIX)/share/doc/$(NAME)"

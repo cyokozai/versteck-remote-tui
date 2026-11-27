@@ -2,6 +2,7 @@
 Output docs/screens/menu-status.gif
 Output docs/screens/menu-status.txt
 Source docs/tapes/_settings.tape
+Source docs/tapes/_env.tape
 
 Hide
 Type "mkdir -p /tmp/vrs-log && clear"
