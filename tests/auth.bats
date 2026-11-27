@@ -196,6 +196,9 @@ teardown() {
   k=$(cat "$BATS_TEST_TMPDIR/kpid")
   kill -0 "$k"
   kill -KILL "$parent"
+  # 本番では TUI の親（sshd やログインシェル）が消えた TUI を回収する。テストでは自分で回収する
+  # （回収されていないゾンビには kill -0 が通ってしまう）
+  wait "$parent" 2>/dev/null || true
   for i in $(seq 1 40); do kill -0 "$k" 2>/dev/null || break; sleep 0.1; done
   if kill -0 "$k" 2>/dev/null; then
     kill "$k" 2>/dev/null
