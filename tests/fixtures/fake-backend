@@ -4,7 +4,8 @@
 #   FAKE_INTERFACE_JSON       interface-version の出力を差し替える
 #   FAKE_STATUS_JSON / FAKE_AUDIT_JSONL  返す中身のファイル
 here="$(cd "$(dirname "$0")" && pwd)"
-{ printf 'backend'; printf ' [%s]' "$@"; printf '\n'; } >>"$FAKE_LOG_DIR/backend.log"
+line=$(printf ' [%s]' "$@")
+printf 'backend%s\n' "$line" >>"$FAKE_LOG_DIR/backend.log"
 sub=${1:-}
 shift || true
 if [[ $sub == interface-version ]]; then

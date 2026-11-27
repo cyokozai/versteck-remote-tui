@@ -1,0 +1,25 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # 入れる先と同じ Ubuntu 26.04 の apt の gum・bats・jq・shellcheck で試す
+    container: ubuntu:26.04
+    steps:
+      - name: Install tools from apt
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            ca-certificates git make bats gum jq shellcheck tar gzip procps
+          dpkg-query -W gum bats jq shellcheck
+      - uses: actions/checkout@v4
+      - name: Lint and test
+        run: make check

@@ -2,7 +2,9 @@
 # 偽の gum。引数を記録し、FAKE_GUM_ANSWERS の先頭の行を答えとして返す。
 # 答えが尽きたら 130（Esc・Ctrl-C と同じ）を返す。
 log="$FAKE_LOG_DIR/gum.log"
-{ printf 'gum'; printf ' [%s]' "$@"; printf '\n'; } >>"$log"
+# パイプの中で同時に動く gum（format | pager）の記録が混ざらないよう、1 回の書き込みにまとめる
+line=$(printf ' [%s]' "$@")
+printf 'gum%s\n' "$line" >>"$log"
 
 pop() {
   local first

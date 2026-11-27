@@ -8,7 +8,8 @@ TEST_BASE  ?= ubuntu:26.04
 TEST_IMAGE ?= versteck-remote-tui-test:local
 DIST_DIR   ?= dist
 
-SCRIPTS := bin/$(NAME) $(wildcard lib/$(NAME)/*.sh) tests/fixtures/fake-backend $(wildcard tests/fixtures/bin/*)
+LIBS    := $(wildcard lib/$(NAME)/*.sh)
+SCRIPTS := bin/$(NAME) tests/fixtures/fake-backend $(wildcard tests/fixtures/bin/*) tests/test_helper.bash
 
 .PHONY: test check lint unit install dist clean
 
@@ -21,8 +22,10 @@ test:
 # コンテナの中（CI を含む）で走らせる検査
 check: lint unit
 
+# lib の各ファイルは互いの変数を使うので、ファイル単位の「未使用の変数」(SC2034) だけは外す
 lint:
-	shellcheck -x $(SCRIPTS) tests/test_helper.bash
+	shellcheck -x $(SCRIPTS)
+	shellcheck -x --exclude=SC2034 $(LIBS)
 
 unit:
 	bats tests

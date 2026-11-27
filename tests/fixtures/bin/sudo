@@ -3,7 +3,8 @@
 #   nopasswd: -n でも通る（A の方式）
 #   password: -v を通るまでは -n が失敗する（B の方式）。FAKE_SUDO_V_FAIL=1 なら -v も失敗
 #   deny    : 何も通らない
-{ printf 'sudo'; printf ' [%s]' "$@"; printf '\n'; } >>"$FAKE_LOG_DIR/sudo.log"
+line=$(printf ' [%s]' "$@")
+printf 'sudo%s\n' "$line" >>"$FAKE_LOG_DIR/sudo.log"
 mode=${FAKE_SUDO_MODE:-nopasswd}
 stamp="$FAKE_LOG_DIR/sudo.stamp"
 nonint=0
