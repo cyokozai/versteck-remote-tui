@@ -7,11 +7,13 @@ VERSION    ?=
 TEST_BASE  ?= ubuntu:26.04
 TEST_IMAGE ?= versteck-remote-tui-test:local
 DIST_DIR   ?= dist
+VHS_BASE   ?= ghcr.io/charmbracelet/vhs:v0.10.0
+VHS_IMAGE  ?= versteck-remote-tui-vhs:local
 
 LIBS    := $(wildcard lib/$(NAME)/*.sh)
-SCRIPTS := bin/$(NAME) tests/fixtures/fake-backend $(wildcard tests/fixtures/bin/*) tests/test_helper.bash
+SCRIPTS := bin/$(NAME) tests/fixtures/fake-backend $(wildcard tests/fixtures/bin/*) tests/test_helper.bash docs/tapes/record.sh
 
-.PHONY: test check lint unit install dist clean
+.PHONY: test check lint unit install dist clean screens
 
 # 手元の入口。テストはコンテナの中で回す（手元に gum・bats・jq を入れない）。
 # 例: make test TEST_BASE=versteck-ci:local
@@ -29,6 +31,15 @@ lint:
 
 unit:
 	bats tests
+
+# 画面の録画を作り直す。docs/tapes/*.tape（_ で始まるものは共通の設定なので除く）を VHS のコンテナで流し、
+# docs/screens/ に GIF とテキストを出す（同じ名前のファイルは上書き）。手元に VHS・gum・書体は入れない。
+# 例: make screens                                全部
+#     make screens TAPES=docs/tapes/stop-one.tape  1 本だけ
+TAPES ?= $(filter-out docs/tapes/_%,$(wildcard docs/tapes/*.tape))
+screens:
+	docker build --build-arg VHS_IMAGE=$(VHS_BASE) -t $(VHS_IMAGE) -f Dockerfile.vhs .
+	docker run --rm --hostname example-vm -v "$(CURDIR):/src" -w /src --entrypoint docs/tapes/record.sh $(VHS_IMAGE) $(TAPES)
 
 install:
 	install -d "$(DESTDIR)$(PREFIX)/bin" "$(DESTDIR)$(PREFIX)/lib/$(NAME)" "$(DESTDIR)$(PREFIX)/share/doc/$(NAME)"
