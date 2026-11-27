@@ -12,7 +12,7 @@ versteck は VM に AI エージェント（Claude Code・Muse など）を住�
 |---|---|
 | 状態の一覧 | 人の入口・エージェントのセッション・Tailscale・ディスクを見せます。再読み込みできます |
 | セッションを覗く | 選んだセッションの画面の文字を pager で見せます。読み取り専用で、tmux attach はしません |
-| セッションを止める | 選んで確認してから止めます。「すべて止める」も確認付きです。この画面には「人の入口は止まりません」「確実に止まるのは VM を止めることです」を毎回出します |
+| セッションを止める | 選んで確認してから止めます。「すべて止める」も確認付きで、一覧が 0 件でも選べます。名前の形が合わないセッションは一覧に出さず、その件数を出します。この画面には「人の入口は止まりません」「確実に止まるのは VM を止めることです」を毎回出します |
 | 監査ログ | 新しい順に見せます。「失敗だけ」と「エージェント名で絞る」を選べます。絞り込みは TUI が jq で行います |
 | 止め方の手順 | バックエンドの `kill-switches` が出す Markdown を `gum format` で見せます |
 | シェルへ降りる | `exec bash -l` でログインシェルに移ります。TUI が壊れても入れる逃げ道です。降りた先の操作は TUI の記録の外です |
@@ -44,9 +44,11 @@ versteck-remote-tui help             # 使い方
 |---|---|
 | 0 | 成功 |
 | 1 | 予期しない失敗（バックエンドの 2 やその他の失敗も含む） |
-| 2 | 使い方の誤り（知らない引数・許可外の `SSH_ORIGINAL_COMMAND`・設定の誤り） |
+| 2 | 使い方の誤り（知らない引数・許可外の `SSH_ORIGINAL_COMMAND`・設定の誤り。`VERSTECK_TUI_SUDO` や `VERSTECK_TUI_SUDO_REFRESH` の値の誤りを含む） |
 | 3 | 対象が無い（バックエンドの 3） |
 | 4 | 取得できない（バックエンドの 4、認証できない、バックエンドが無い・版が合わない） |
+
+メニュー（TUI）は、「終了」を選ぶか Esc で抜けると 0、メニューで Ctrl-C を押すと 130 で終わります。画面の中の Esc と Ctrl-C はメニューに戻るだけです。
 
 ### 環境変数
 
@@ -54,7 +56,7 @@ versteck-remote-tui help             # 使い方
 |---|---|---|
 | `VERSTECK_TUI_BACKEND` | `/usr/local/sbin/versteck-ctl` | バックエンドのパス |
 | `VERSTECK_TUI_SUDO` | `auto` | `never` にすると sudo を付けずに呼びます（テストと root で動かすとき用） |
-| `VERSTECK_TUI_SUDO_REFRESH` | `60` | B の方式で sudo の期限を延ばす間隔（秒） |
+| `VERSTECK_TUI_SUDO_REFRESH` | `60` | B の方式で sudo の期限を延ばす間隔（秒）。1 以上の整数で、sudo の期限（`timestamp_timeout`）より短くしてください。長いと、更新の前に期限が切れます。整数でなければ終了コード 2 です |
 | `VERSTECK_REMOTE_TUI_SKIP` | なし | 「シェルへ降りる」で TUI が `1` にします。呼び出し側がこれを見て、メニューを出し直さないようにします |
 
 ## 認証（A と B）
@@ -62,7 +64,7 @@ versteck-remote-tui help             # 使い方
 admin は管理ユーザー `versteck-admin` で入ります。このユーザーは Ansible の入口でもあり、sudo にはパスワードが要ります。TUI は起動時に `sudo -k -n -- <バックエンド> interface-version` を試し、方式を決めます。`-k` で sudo の期限をその 1 回だけ無視するので、同じ端末で先に sudo を使っていても A と取り違えません。
 
 - **A**: `sudo -k -n` が通った場合です。versteck 側の sudoers で、バックエンドの決まった引数の形だけがパスワードなしになっています。鍵のログインだけで動きます。
-- **B**: A が通らなかった場合です。`sudo -v` でパスワードを 1 回だけ聞き、背景で `sudo -n -v` を 60 秒ごとに呼んで期限を延ばします。TUI の終了（EXIT・INT・TERM）と「シェルへ降りる」で、この更新を止めます。
+- **B**: A が通らなかった場合です。`sudo -v` でパスワードを 1 回だけ聞き、背景で `sudo -n -v` を 60 秒ごとに呼んで期限を延ばします。間隔は sudo の期限（`timestamp_timeout`）より短くしてください。TUI の終了（EXIT・INT・TERM）と「シェルへ降りる」で、この更新を止めます。TUI が SIGKILL のように後始末なしで消えたときも、背景の更新は次に期限を延ばす前に TUI がいないことを確かめて終わります。
 
 どちらの方式でも、バックエンドは `sudo -n` で呼びます。パスワードを聞くのは起動時の 1 回だけです。`sudo -v` に失敗したら理由を出し、シェルへ降ります。sudoers の例と、`stop *` のようなワイルドカードの危うさは [docs/interface.md](docs/interface.md) にあります。
 
@@ -83,7 +85,13 @@ fi
 - 「シェルへ降りる」を選ぶと、TUI は `VERSTECK_REMOTE_TUI_SKIP=1` を設定してから `exec bash -l` します。`bash -l` はもう一度 `~/.profile` を読みますが、この目印があるのでメニューは出ず、繰り返しになりません。
 - gum や jq が無い、sudo の確認に失敗した、のようにメニューを出せないときも、TUI は同じ目印を立ててシェルへ降ります。上の例のように `exec` で呼んでも、入れなくなることはありません。メニューの「終了」を選ぶと、`exec` で呼んだ場合は SSH の接続が終わります。
 - `bash -l` は `~/.bash_profile` があるとそちらを先に読み、`~/.profile` を読みません。目印を見る処理は、実際に読まれるファイルに置いてください。
-- `ssh example-vm status` のように端末なしでコマンドを渡した場合、bash は `~/.profile` を読みません。鍵の `command="versteck-remote-tui"` で縛る場合は、`SSH_ORIGINAL_COMMAND` の照合（上の「使い方」）が効きます。
+- `ssh example-vm status` のように端末なしでコマンドを渡した場合、bash は `~/.profile` を読みません。鍵に `command="versteck-remote-tui"` を付けた場合は、`SSH_ORIGINAL_COMMAND` の照合（上の「使い方」）が効きます。
+
+### TUI は安全の境界ではない
+
+鍵に `command="versteck-remote-tui"` を付けても、admin ができることは狭まりません。メニューの「シェルへ降りる」と、gum・jq が無い・sudo の確認に失敗したときの自動の降り口から、ログインシェルが得られるからです。`command=` は起動の仕方を決めるものであり、制限の手段にはなりません。
+
+admin にさせてよいことの範囲は、sudoers（[docs/interface.md](docs/interface.md)）とバックエンドの側の検査で決めてください。
 
 ## 依存と gum の版
 
@@ -97,7 +105,7 @@ fi
 make install PREFIX=/usr/local DESTDIR=
 ```
 
-`$(PREFIX)/bin/versteck-remote-tui`、`$(PREFIX)/lib/versteck-remote-tui/*.sh`、`$(PREFIX)/share/doc/versteck-remote-tui/` に置きます。bin は自分の場所から `../lib/versteck-remote-tui` を探します。
+`$(PREFIX)/bin/versteck-remote-tui`、`$(PREFIX)/lib/versteck-remote-tui/*.sh`、`$(PREFIX)/share/doc/versteck-remote-tui/` に置きます。bin は自分の場所から `../lib/versteck-remote-tui` を探します。この場所は環境変数では変えられません。
 
 ## リリースの出し方
 
@@ -124,6 +132,8 @@ make test TEST_BASE=<手元の image>     # 土台を差し替える
 
 - `make check` は shellcheck と bats を走らせます（CI もコンテナの中でこれを呼びます）。
 - 対話の画面は PATH の先頭に置いた偽の `gum`（引数を記録し、決めた答えを返す）と偽の `sudo`・偽のバックエンド（`tests/fixtures/`）で流れを試します。本物の gum は非対話で動く `gum format` と `gum style` の煙試験だけに使います。
+- 偽の `gum` は本物より厳しく引数を検査します。位置引数が `--` の前にある、知らないフラグがある、`choose`・`filter` の答えが選択肢に無い、のどれかで失敗します。外から来た文字列が `-` で始まると本物の gum はフラグと読んで失敗するので、TUI は位置引数を必ず `--` の後ろに置きます。
+- 偽の `sudo` は、期限（タイムスタンプ）が残っている状態と、NOPASSWD の許可一覧（`FAKE_SUDO_NOPASSWD`）を表せます。
 - gum を呼ぶ部分（`vrt_screen_*`）と、JSON の整形・絞り込みなどの純粋な処理（`vrt_format_status_text`・`vrt_audit_filter` など）を分け、後者を bats で直接試します。
 
 ## ライセンス
