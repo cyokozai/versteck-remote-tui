@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# 偽の sudo。FAKE_SUDO_MODE で振る舞いを変える。
+#   nopasswd: -n でも通る（A の方式）
+#   password: -v を通るまでは -n が失敗する（B の方式）。FAKE_SUDO_V_FAIL=1 なら -v も失敗
+#   deny    : 何も通らない
+{ printf 'sudo'; printf ' [%s]' "$@"; printf '\n'; } >>"$FAKE_LOG_DIR/sudo.log"
+mode=${FAKE_SUDO_MODE:-nopasswd}
+stamp="$FAKE_LOG_DIR/sudo.stamp"
+nonint=0
+validate=0
+while (($#)); do
+  case $1 in
+    -n) nonint=1 ;;
+    -v) validate=1 ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      echo "fake sudo: unknown option $1" >&2
+      exit 1
+      ;;
+    *) break ;;
+  esac
+  shift
+done
+allowed() {
+  case $mode in
+    nopasswd) return 0 ;;
+    password) [[ -e $stamp ]] ;;
+    *) return 1 ;;
+  esac
+}
+if ((validate)); then
+  allowed && exit 0
+  ((nonint)) && exit 1
+  if [[ ${FAKE_SUDO_V_FAIL:-0} == 1 || $mode != password ]]; then
+    echo "sudo: 3 incorrect password attempts" >&2
+    exit 1
+  fi
+  : >"$stamp"
+  exit 0
+fi
+allowed && exec "$@"
+echo "sudo: a password is required" >&2
+exit 1

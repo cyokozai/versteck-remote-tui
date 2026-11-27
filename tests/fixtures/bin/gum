@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# 偽の gum。引数を記録し、FAKE_GUM_ANSWERS の先頭の行を答えとして返す。
+# 答えが尽きたら 130（Esc・Ctrl-C と同じ）を返す。
+log="$FAKE_LOG_DIR/gum.log"
+{ printf 'gum'; printf ' [%s]' "$@"; printf '\n'; } >>"$log"
+
+pop() {
+  local first
+  [[ -s $FAKE_GUM_ANSWERS ]] || return 1
+  first=$(head -n 1 "$FAKE_GUM_ANSWERS")
+  tail -n +2 "$FAKE_GUM_ANSWERS" >"$FAKE_GUM_ANSWERS.tmp"
+  mv "$FAKE_GUM_ANSWERS.tmp" "$FAKE_GUM_ANSWERS"
+  printf '%s\n' "$first"
+}
+
+sub=$1
+shift
+case $sub in
+  choose | filter | input)
+    [[ -t 0 ]] || cat >/dev/null
+    ans=$(pop) || exit 130
+    printf '%s\n' "$ans"
+    ;;
+  confirm)
+    ans=$(pop) || exit 130
+    [[ $ans == yes ]]
+    ;;
+  pager)
+    { printf -- '--- pager ---\n'; cat; } >>"$FAKE_LOG_DIR/pager.out"
+    ;;
+  format)
+    if (($# > 0)); then printf '%s\n' "$@"; else cat; fi
+    ;;
+  style)
+    args=()
+    while (($#)); do
+      case $1 in
+        --*=* | --bold | --italic | --faint | --underline | --strikethrough) ;;
+        --*) shift ;;
+        *) args+=("$1") ;;
+      esac
+      shift
+    done
+    if ((${#args[@]} > 0)); then printf '%s\n' "${args[@]}"; else cat; fi
+    ;;
+  *)
+    echo "fake gum: unknown subcommand $sub" >&2
+    exit 99
+    ;;
+esac

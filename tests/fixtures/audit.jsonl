@@ -1,0 +1,5 @@
+{"time":"2026-11-27T00:10:00Z","agent":"claude-code","command":"git status","result":"ok","detail":""}
+{"time":"2026-11-27T00:30:00Z","agent":"muse","command":"rm -rf /tmp/x","result":"denied","detail":"not allowed"}
+not json at all
+{"time":"2026-11-27T00:20:00Z","agent":"claude-code","command":"make test","result":"error","detail":"exit 2"}
+{"time":"2026-11-27T00:40:00Z","agent":"muse","command":"ls","result":"ok","detail":""}

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# versteck-remote-tui: admin が SSH で VM に入ったときに使う TUI の入口。
+# 振り分けの規則は lib/versteck-remote-tui/main.sh の vrt_main を参照。
+set -o pipefail
+
+vrt_self=$(readlink -f -- "${BASH_SOURCE[0]}")
+VRT_LIBDIR=${VRT_LIBDIR:-"$(dirname -- "$vrt_self")/../lib/versteck-remote-tui"}
+if [[ ! -r $VRT_LIBDIR/main.sh ]]; then
+  echo "versteck-remote-tui: lib が見つかりません: $VRT_LIBDIR" >&2
+  exit 1
+fi
+for vrt_f in "$VRT_LIBDIR"/*.sh; do
+  # shellcheck source=/dev/null
+  source "$vrt_f"
+done
+unset vrt_f vrt_self
+
+vrt_main "$@"
