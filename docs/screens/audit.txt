@@ -551,15 +551,15 @@
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -582,15 +582,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-> 監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+> Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -613,15 +613,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-> 監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+> Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -675,11 +675,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-> すべて
-  失敗だけ
-  エージェント名で絞る
-  戻る
+Audit log (latest 200 entries, newest first)
+> All
+  Failures only
+  Filter by agent
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -705,7 +705,7 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 ────────────────────────────────────────────────────────────────────────────────
-> versteck-remote-tui
+
 
 
 
@@ -737,8 +737,8 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ 監査ログ: すべて                                                                          │
-│    2 │ 時刻  結果  エージェント  コマンド  詳細                                                  │
+│    1 │ Audit log: All                                                                            │
+│    2 │ Time  Result  Agent  Command  Detail                                                      │
 │    3 │                                                                                           │
 │    4 │ 2026-11-27T00:40:00Z  ok  muse  ls                                                        │
 │    5 │ 2026-11-27T00:30:00Z  denied  muse  rm -rf /tmp/x  not allowed                            │
@@ -799,11 +799,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-> すべて
-  失敗だけ
-  エージェント名で絞る
-  戻る
+Audit log (latest 200 entries, newest first)
+> All
+  Failures only
+  Filter by agent
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -830,11 +830,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-  すべて
-> 失敗だけ
-  エージェント名で絞る
-  戻る
+Audit log (latest 200 entries, newest first)
+  All
+> Failures only
+  Filter by agent
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -861,11 +861,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-  すべて
-> 失敗だけ
-  エージェント名で絞る
-  戻る
+Audit log (latest 200 entries, newest first)
+  All
+> Failures only
+  Filter by agent
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -923,8 +923,8 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ 監査ログ: 失敗だけ                                                                        │
-│    2 │ 時刻  結果  エージェント  コマンド  詳細                                                  │
+│    1 │ Audit log: Failures only                                                                  │
+│    2 │ Time  Result  Agent  Command  Detail                                                      │
 │    3 │                                                                                           │
 │    4 │ 2026-11-27T00:30:00Z  denied  muse  rm -rf /tmp/x  not allowed                            │
 │    5 │ 2026-11-27T00:20:00Z  error  claude-code  make test  exit 2                               │
@@ -985,11 +985,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-> すべて
-  失敗だけ
-  エージェント名で絞る
-  戻る
+Audit log (latest 200 entries, newest first)
+> All
+  Failures only
+  Filter by agent
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -1016,11 +1016,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-  すべて
-  失敗だけ
-> エージェント名で絞る
-  戻る
+Audit log (latest 200 entries, newest first)
+  All
+  Failures only
+> Filter by agent
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -1047,11 +1047,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-  すべて
-  失敗だけ
-> エージェント名で絞る
-  戻る
+Audit log (latest 200 entries, newest first)
+  All
+  Failures only
+> Filter by agent
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -1077,7 +1077,7 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 ────────────────────────────────────────────────────────────────────────────────
-> versteck-remote-tui
+
 
 
 
@@ -1108,7 +1108,7 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 ────────────────────────────────────────────────────────────────────────────────
-> エージェント名
+> Agent name
 • claude-code
   muse
 
@@ -1233,8 +1233,8 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ 監査ログ: エージェント名で絞る (muse)                                                     │
-│    2 │ 時刻  結果  エージェント  コマンド  詳細                                                  │
+│    1 │ Audit log: Filter by agent (muse)                                                         │
+│    2 │ Time  Result  Agent  Command  Detail                                                      │
 │    3 │                                                                                           │
 │    4 │ 2026-11-27T00:40:00Z  ok  muse  ls                                                        │
 │    5 │ 2026-11-27T00:30:00Z  denied  muse  rm -rf /tmp/x  not allowed                            │
@@ -1295,11 +1295,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-> すべて
-  失敗だけ
-  エージェント名で絞る
-  戻る
+Audit log (latest 200 entries, newest first)
+> All
+  Failures only
+  Filter by agent
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -1326,11 +1326,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-  すべて
-  失敗だけ
-  エージェント名で絞る
-> 戻る
+Audit log (latest 200 entries, newest first)
+  All
+  Failures only
+  Filter by agent
+> Back
 
 
 ←↓↑→ navigate • enter submit
@@ -1357,11 +1357,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-  すべて
-  失敗だけ
-  エージェント名で絞る
-> 戻る
+Audit log (latest 200 entries, newest first)
+  All
+  Failures only
+  Filter by agent
+> Back
 
 
 ←↓↑→ navigate • enter submit
@@ -1419,15 +1419,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -1450,7 +1450,6 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-nothing selected
 >
 
 
@@ -1479,10 +1478,11 @@ nothing selected
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-nothing selected
 >
+
 
 
 

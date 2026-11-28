@@ -551,15 +551,15 @@
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -582,15 +582,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-> シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+> Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -613,15 +613,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-> シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+> Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -644,76 +644,14 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-────────────────────────────────────────────────────────────────────────────────
-> versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
- シェルへ降りますか？
-
-    はい        いいえ
-
-←→ toggle • enter submit • y はい • n いいえ
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-────────────────────────────────────────────────────────────────────────────────
-> versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
 
 
 
@@ -737,23 +675,84 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+ Drop to a shell?
+
+    Yes        No
+
+←→ toggle • enter submit • y Yes • n No
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> versteck-remote-tui
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> versteck-remote-tui
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -766,25 +765,25 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-> シェルへ降りる
-  終了
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+> Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -797,25 +796,25 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-> シェルへ降りる
-  終了
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+> Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -828,60 +827,30 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
-────────────────────────────────────────────────────────────────────────────────
-> versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-
-
-
-
-
-
-
-
-
-
-
-
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
- シェルへ降りますか？
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
 
-    はい        いいえ
 
-←→ toggle • enter submit • y はい • n いいえ
+
+
+
+
+
+
 
 
 
@@ -892,58 +861,27 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
- シェルへ降りますか？
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+ Drop to a shell?
 
-    はい        いいえ
+    Yes        No
 
-←→ toggle • enter submit • y はい • n いいえ
+←→ toggle • enter submit • y Yes • n No
 
 
 
-
-
-
-
-
-────────────────────────────────────────────────────────────────────────────────
-> versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
- シェルへ降りますか？
-
-    はい        いいえ
-
-←→ toggle • enter submit • y はい • n いいえ
 
 
 
@@ -954,22 +892,81 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+ Drop to a shell?
+
+    Yes        No
+
+←→ toggle • enter submit • y Yes • n No
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> versteck-remote-tui
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+ Drop to a shell?
+
+    Yes        No
+
+←→ toggle • enter submit • y Yes • n No
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> versteck-remote-tui
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
 root@example-vm:/src#
 
 
@@ -983,24 +980,24 @@ root@example-vm:/src#
 
 
 
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
 root@example-vm:/src#
 
 
@@ -1014,24 +1011,24 @@ root@example-vm:/src#
 
 
 
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
 root@example-vm:/src# echo VERSTECK_REMOTE_TUI_SKIP=$VERSTECK_REMOTE_TUI_SKIP
 
 
@@ -1045,24 +1042,24 @@ root@example-vm:/src# echo VERSTECK_REMOTE_TUI_SKIP=$VERSTECK_REMOTE_TUI_SKIP
 
 
 
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
 root@example-vm:/src# echo VERSTECK_REMOTE_TUI_SKIP=$VERSTECK_REMOTE_TUI_SKIP
 VERSTECK_REMOTE_TUI_SKIP=1
 root@example-vm:/src#
@@ -1076,27 +1073,30 @@ root@example-vm:/src#
 
 
 
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
 root@example-vm:/src# echo VERSTECK_REMOTE_TUI_SKIP=$VERSTECK_REMOTE_TUI_SKIP
 VERSTECK_REMOTE_TUI_SKIP=1
 root@example-vm:/src#
+
+
+
 
 
 

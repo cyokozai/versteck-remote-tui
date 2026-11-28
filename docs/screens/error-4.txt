@@ -551,15 +551,15 @@
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -583,7 +583,7 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
 fake backend: failing with 4
-
+Could not get the information (exit code 4). The backend failed internally.
 
 
 
@@ -614,16 +614,16 @@ fake backend: failing with 4
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
 fake backend: failing with 4
-情報を取得できませんでした（終了コード 4）。バックエンドの下回りが失敗しています。
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+Could not get the information (exit code 4). The backend failed internally.
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -645,8 +645,7 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
 fake backend: failing with 4
-情報を取得できませんでした（終了コード 4）。バックエンドの下回りが失敗しています。
-nothing selected
+Could not get the information (exit code 4). The backend failed internally.
 >
 
 
@@ -673,12 +672,13 @@ nothing selected
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
 fake backend: failing with 4
-情報を取得できませんでした（終了コード 4）。バックエンドの下回りが失敗しています。
-nothing selected
+Could not get the information (exit code 4). The backend failed internally.
 >
+
 
 
 

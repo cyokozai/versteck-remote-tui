@@ -1,4 +1,4 @@
-
+>
 
 
 
@@ -51,7 +51,7 @@
 
 
 ────────────────────────────────────────────────────────────────────────────────
-
+>
 
 
 
@@ -679,15 +679,15 @@
 > stty size
 30 80
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -710,15 +710,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 > stty size
 30 80
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-> セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+> Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -741,15 +741,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 > stty size
 30 80
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-> セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+> Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -772,11 +772,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 > stty size
 30 80
 > versteck-remote-tui
-
-
-
-
-
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
 
 
 
@@ -803,19 +803,19 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-止めるセッションを選んでください
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+Choose a session to stop
 > claude-1
   muse-1
-  すべて止める
-  戻る
+  Stop all
+  Back
 
 
 ←↓↑→ navigate • enter submit
-
 
 
 
@@ -834,19 +834,19 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-止めるセッションを選んでください
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+Choose a session to stop
   claude-1
   muse-1
-  すべて止める
-> 戻る
+  Stop all
+> Back
 
 
 ←↓↑→ navigate • enter submit
-
 
 
 
@@ -865,15 +865,16 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-止めるセッションを選んでください
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+Choose a session to stop
   claude-1
   muse-1
-  すべて止める
-> 戻る
+  Stop all
+> Back
 
 
 ←↓↑→ navigate • enter submit
@@ -891,55 +892,55 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
+────────────────────────────────────────────────────────────────────────────────
+> stty size
+30 80
+> versteck-remote-tui
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ────────────────────────────────────────────────────────────────────────────────
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-────────────────────────────────────────────────────────────────────────────────
-> stty size
-30 80
-> versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -953,16 +954,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
-
 ────────────────────────────────────────────────────────────────────────────────
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
 
 
 
@@ -987,16 +987,16 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 ╭──────────────────────────────────────────────────────────────────────────────╮
-│    1 │ 状態の一覧（取得 02:04:55）                                           │
+│    1 │ Status (fetched 21:16:04)                                             │
 │    2 │                                                                       │
-│    3 │ ホスト: example-vm                                                    │
-│    4 │ 取得時刻: 2026-11-27T01:02:03Z                                        │
-│    5 │ 人の入口: 稼働中 (active) sshd running                                │
-│    6 │ Tailscale: つながっている (connected) logged in                       │
-│    7 │ ディスク:                                                             │
+│    3 │ Host: example-vm                                                      │
+│    4 │ Generated at: 2026-11-27T01:02:03Z                                    │
+│    5 │ Human entrance: active sshd running                                   │
+│    6 │ Tailscale: connected logged in                                        │
+│    7 │ Disks:                                                                │
 │    8 │   / 42%                                                               │
-│    9 │   /var 93% 残りわずか                                                 │
-│   10 │ セッション: 2 件                                                      │
+│    9 │   /var 93% nearly full                                                │
+│   10 │ Sessions: 2                                                           │
 │   11 │   claude-1 claude-code 2026-11-27T00:00:00Z                           │
 │   12 │   muse-1 muse 2026-11-26T23:00:00Z                                    │
 │    ~ │                                                                       │
@@ -1020,11 +1020,11 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
 
 
 
@@ -1051,13 +1051,14 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-状態の一覧
-> 再読み込み
-  戻る
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+Status
+> Reload
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -1077,18 +1078,18 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
-
 ────────────────────────────────────────────────────────────────────────────────
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-状態の一覧
-  再読み込み
-> 戻る
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+Status
+  Reload
+> Back
 
 
 ←↓↑→ navigate • enter submit
@@ -1108,18 +1109,18 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
-
 ────────────────────────────────────────────────────────────────────────────────
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-状態の一覧
-  再読み込み
-> 戻る
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+Status
+  Reload
+> Back
 
 
 ←↓↑→ navigate • enter submit
@@ -1139,55 +1140,55 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
+────────────────────────────────────────────────────────────────────────────────
+> stty size
+30 80
+> versteck-remote-tui
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ────────────────────────────────────────────────────────────────────────────────
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-────────────────────────────────────────────────────────────────────────────────
-> stty size
-30 80
-> versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -1201,24 +1202,24 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
-
 ────────────────────────────────────────────────────────────────────────────────
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-> シェルへ降りる
-  終了
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+> Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -1232,24 +1233,24 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
-
 ────────────────────────────────────────────────────────────────────────────────
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-> シェルへ降りる
-  終了
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+> Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -1263,85 +1264,22 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 
-
 ────────────────────────────────────────────────────────────────────────────────
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-────────────────────────────────────────────────────────────────────────────────
-> stty size
-30 80
-> versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-┌───────────────────────────────────────────────────────────────────────────────
-──────────────────────────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-                          │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOT
-E_TUI_SKIP=1 を立てます。 │
-└───────────────────────────────────────────────────────────────────────────────
-──────────────────────────┘
- シェルへ降りますか？
-
-    はい        いいえ
-
-←→ toggle • enter submit • y はい • n いいえ
-
-
-
-
-
-
-
-
-
-
-────────────────────────────────────────────────────────────────────────────────
-> stty size
-30 80
-> versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-┌───────────────────────────────────────────────────────────────────────────────
-──────────────────────────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-                          │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOT
-E_TUI_SKIP=1 を立てます。 │
-└───────────────────────────────────────────────────────────────────────────────
-──────────────────────────┘
 
 
 
@@ -1361,27 +1299,89 @@ E_TUI_SKIP=1 を立てます。 │
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-┌───────────────────────────────────────────────────────────────────────────────
-──────────────────────────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-                          │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOT
-E_TUI_SKIP=1 を立てます。 │
-└───────────────────────────────────────────────────────────────────────────────
-──────────────────────────┘
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+ Drop to a shell?
+
+    Yes        No
+
+←→ toggle • enter submit • y Yes • n No
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> stty size
+30 80
+> versteck-remote-tui
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> stty size
+30 80
+> versteck-remote-tui
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -1392,19 +1392,18 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-┌───────────────────────────────────────────────────────────────────────────────
-──────────────────────────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-                          │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOT
-E_TUI_SKIP=1 を立てます。 │
-└───────────────────────────────────────────────────────────────────────────────
-──────────────────────────┘
-nothing selected
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
 >
 
 
@@ -1419,24 +1418,25 @@ nothing selected
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
 > stty size
 30 80
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-┌───────────────────────────────────────────────────────────────────────────────
-──────────────────────────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-                          │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOT
-E_TUI_SKIP=1 を立てます。 │
-└───────────────────────────────────────────────────────────────────────────────
-──────────────────────────┘
-nothing selected
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+Did not drop to a shell.
 >
+
 
 
 

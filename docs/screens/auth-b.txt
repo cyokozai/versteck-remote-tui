@@ -520,7 +520,7 @@
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-パスワードなしの sudo では動かせないため、sudo のパスワードを 1 回だけ聞きます。
+Passwordless sudo is not available, so the sudo password is asked once.
 
 
 
@@ -551,16 +551,16 @@
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-パスワードなしの sudo では動かせないため、sudo のパスワードを 1 回だけ聞きます。
-versteck-remote-tui 0.0.0-dev | 認証: B（sudo のパスワード・60 秒ごとに更新）
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+Passwordless sudo is not available, so the sudo password is asked once.
+versteck-remote-tui 0.0.0-dev | auth: B (sudo password, refreshed every 60 s)
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -582,16 +582,16 @@ versteck-remote-tui 0.0.0-dev | 認証: B（sudo のパスワード・60 秒ご�
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-パスワードなしの sudo では動かせないため、sudo のパスワードを 1 回だけ聞きます。
-versteck-remote-tui 0.0.0-dev | 認証: B（sudo のパスワード・60 秒ごとに更新）
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-> 終了
+Passwordless sudo is not available, so the sudo password is asked once.
+versteck-remote-tui 0.0.0-dev | auth: B (sudo password, refreshed every 60 s)
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+> Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -613,16 +613,16 @@ versteck-remote-tui 0.0.0-dev | 認証: B（sudo のパスワード・60 秒ご�
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-パスワードなしの sudo では動かせないため、sudo のパスワードを 1 回だけ聞きます。
-versteck-remote-tui 0.0.0-dev | 認証: B（sudo のパスワード・60 秒ごとに更新）
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-> 終了
+Passwordless sudo is not available, so the sudo password is asked once.
+versteck-remote-tui 0.0.0-dev | auth: B (sudo password, refreshed every 60 s)
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+> Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -644,7 +644,7 @@ versteck-remote-tui 0.0.0-dev | 認証: B（sudo のパスワード・60 秒ご�
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-パスワードなしの sudo では動かせないため、sudo のパスワードを 1 回だけ聞きます。
+Passwordless sudo is not available, so the sudo password is asked once.
 >
 
 
@@ -675,7 +675,7 @@ versteck-remote-tui 0.0.0-dev | 認証: B（sudo のパスワード・60 秒ご�
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-パスワードなしの sudo では動かせないため、sudo のパスワードを 1 回だけ聞きます。
+Passwordless sudo is not available, so the sudo password is asked once.
 >
 
 

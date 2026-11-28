@@ -551,15 +551,15 @@
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -582,15 +582,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-> セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+> Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -613,15 +613,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-> セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+> Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -675,10 +675,10 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-覗くセッションを選んでください（読み取り専用）
+Choose a session to peek at (read-only)
 > claude-1
   muse-1
-  戻る
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -705,7 +705,7 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 
 ────────────────────────────────────────────────────────────────────────────────
-> versteck-remote-tui
+
 
 
 
@@ -737,7 +737,7 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ セッション claude-1 の画面（読み取り専用・取得 02:05:35）                                 │
+│    1 │ Session claude-1 screen (read-only, fetched 21:16:40)                                     │
 │    2 │                                                                                           │
 │    3 │ screen of claude-1                                                                        │
 │    4 │ $ echo hi                                                                                 │
@@ -799,9 +799,9 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-セッション claude-1
-> 再読み込み
-  戻る
+Session claude-1
+> Reload
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -861,7 +861,7 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ セッション claude-1 の画面（読み取り専用・取得 02:05:38）                                 │
+│    1 │ Session claude-1 screen (read-only, fetched 21:16:43)                                     │
 │    2 │                                                                                           │
 │    3 │ screen of claude-1                                                                        │
 │    4 │ $ echo hi                                                                                 │
@@ -923,9 +923,9 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-セッション claude-1
-> 再読み込み
-  戻る
+Session claude-1
+> Reload
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -954,9 +954,9 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-セッション claude-1
-  再読み込み
-> 戻る
+Session claude-1
+  Reload
+> Back
 
 
 ←↓↑→ navigate • enter submit
@@ -985,9 +985,9 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-セッション claude-1
-  再読み込み
-> 戻る
+Session claude-1
+  Reload
+> Back
 
 
 ←↓↑→ navigate • enter submit
@@ -1016,46 +1016,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-────────────────────────────────────────────────────────────────────────────────
-> versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -1078,7 +1047,37 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-nothing selected
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
+
+
+←↓↑→ navigate • enter submit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> versteck-remote-tui
 >
 
 
@@ -1107,10 +1106,11 @@ nothing selected
 
 
 
+
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-nothing selected
 >
+
 
 
 

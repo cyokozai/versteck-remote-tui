@@ -49,7 +49,7 @@ tapes() {
 
 @test "メニューの項目（実装の tui.sh）が録画と docs/screens.md の両方に出る" {
   local item
-  for item in "状態の一覧" "セッションを覗く" "セッションを止める" "監査ログ" "止め方の手順" "シェルへ降りる" "終了"; do
+  for item in "Status" "Peek session" "Stop session" "Audit log" "Kill switches" "Drop to shell" "Quit"; do
     grep -qF "\"$item\"" "$REPO_ROOT/lib/versteck-remote-tui/tui.sh"
     grep -qE "^[> ] $item\$" "$SHOTS/menu-status.txt"
     grep -qE "^[> ] $item\$" "$DOC"
@@ -66,20 +66,19 @@ tapes() {
 }
 
 @test "シェルへ降りる画面の注意書き（実装の VRT_SHELL_NOTICE）が録画と docs/screens.md に出る" {
-  # 2 行目は 100 桁を超えて端末で折り返す（docs/screens.md の「実装との食い違い」の 1）。
-  # 折り返しても残る各行の先頭 20 文字で照合する
+  # 注意書きは 4 行に分けてあり、どの行も 100 桁に収まるので、行ごとに全文で照合する
   load_libs
   local line
   while IFS= read -r line; do
-    grep -qF "${line:0:20}" "$SHOTS/shell.txt"
-    grep -qF "${line:0:20}" "$DOC"
+    grep -qF "$line" "$SHOTS/shell.txt"
+    grep -qF "$line" "$DOC"
   done <<<"$VRT_SHELL_NOTICE"
 }
 
 @test "認証 B の表示が録画と docs/screens.md に出る" {
-  grep -qF "認証: B（sudo のパスワード・60 秒ごとに更新）" "$SHOTS/auth-b.txt"
-  grep -qF "認証: B（sudo のパスワード・60 秒ごとに更新）" "$DOC"
-  grep -qF "認証: A（鍵のログインのみ・sudoers で許可）" "$DOC"
+  grep -qF "auth: B (sudo password, refreshed every 60 s)" "$SHOTS/auth-b.txt"
+  grep -qF "auth: B (sudo password, refreshed every 60 s)" "$DOC"
+  grep -qF "auth: A (SSH key only, sudoers)" "$DOC"
 }
 
 @test "docs/screens.md の遷移の地図は mermaid を使わない" {

@@ -2,7 +2,7 @@
 
 この文書は versteck-remote-tui の画面ごとの見た目と、画面どうしの行き来を決める正本です。
 
-画面の文字は手で整えた図ではありません。`make screens` で VHS の端末に TUI を流し、その端末に出た文字を写しています。バックエンドは偽物（`tests/fixtures/fake-backend` と `status-ok.json`・`audit.jsonl`）で、`VERSTECK_TUI_SUDO=never` で動かしています。そのため上部の表示は「認証: sudo なし」、ホスト名は `example-vm`、セッションは `claude-1` と `muse-1` です。
+画面の文字は手で整えた図ではありません。`make screens` で VHS の端末に TUI を流し、その端末に出た文字を写しています。バックエンドは偽物（`tests/fixtures/fake-backend` と `status-ok.json`・`audit.jsonl`）で、`VERSTECK_TUI_SUDO=never` で動かしています。そのため上部の表示は `auth: no sudo`、ホスト名は `example-vm`、セッションは `claude-1` と `muse-1` です。
 
 - 端末の大きさ: 100 桁 × 30 行（80 桁の確認は [80 桁で見たとき](#80-桁で見たとき)）
 - gum: 0.17.0（上流のリリースの .deb。`Dockerfile.vhs`）
@@ -29,43 +29,41 @@
 
 ## 遷移の地図
 
-`[ ]` は画面、`( )` は画面を持たない処理です。矢印の脇に操作を書きます。Esc はどの選択の画面でも「戻る」と同じ行き先です。
+`[ ]` は画面、`( )` は画面を持たない処理です。矢印の脇に操作を書きます。Esc はどの選択の画面でも `Back` と同じ行き先です。
 
-```text
-                       versteck-remote-tui（端末から・引数なし）
+                  versteck-remote-tui (from a terminal, no arguments)
                                       │
-                      (gum・jq の確認、認証 A／B／なし、版の確認)
-                         │ 通った                    │ 失敗
+                 (check gum and jq, auth A / B / none, backend version)
+                         │ passed                    │ failed
                          ▼                           ▼
-   ┌──────────────────────────────────┐   [メニューを出せない] ──▶ (ログインシェル)
-   │              [メニュー]          │
-   │ 終了 / Esc / Ctrl-C ──▶ (TUI を終える。終了コード 0)
+   ┌──────────────────────────────────┐   [cannot show menu] ──▶ (login shell)
+   │              [Menu]              │
+   │ Quit / Esc / Ctrl-C ──▶ (leave the TUI. Exit code 0 / 0 / 130)
    └──┬──────┬──────┬──────┬──────┬───┘
-      │      │      │      │      │      └── シェルへ降りる ──▶ [注意書き + 確認]
-      │      │      │      │      │                              │ はい ──▶ (ログインシェル)
-      │      │      │      │      │                              │ いいえ・Esc ──▶ [メニュー]
-      │      │      │      │      └── 止め方の手順 ──▶ [pager] ── q・Esc ──▶ [メニュー]
-      │      │      │      └── 監査ログ ──▶ [絞り方の選択] ◀─────────────────────┐
-      │      │      │                         │ すべて・失敗だけ ──▶ [pager] ── q ─┤
-      │      │      │                         │ エージェント名で絞る ──▶ [filter]  │
+      │      │      │      │      │      └── Drop to shell ──▶ [notice + confirm]
+      │      │      │      │      │                              │ Yes ──▶ (login shell)
+      │      │      │      │      │                              │ No・Esc ──▶ [Menu]
+      │      │      │      │      └── Kill switches ──▶ [pager] ── q・Esc ──▶ [Menu]
+      │      │      │      └── Audit log ──▶ [choose filter] ◀────────────────────┐
+      │      │      │                         │ All・Failures only ──▶ [pager] ── q ─┤
+      │      │      │                         │ Filter by agent ──▶ [filter]       │
       │      │      │                         │     Enter ──▶ [pager] ── q ────────┤
       │      │      │                         │     Esc ──────────────────────────┘
-      │      │      │                         └ 戻る・Esc ──▶ [メニュー]
-      │      │      └── セッションを止める ──▶ [注意書き + 選択]
-      │      │                                   │ 0 件 ──▶ 「ありません」 ──▶ [メニュー]
-      │      │                                   │ 名前・すべて止める ──▶ [確認]
-      │      │                                   │     はい ──▶ (stop) ──▶ 「止めました。」 ──▶ [メニュー]
-      │      │                                   │     いいえ・Esc ──▶ 「止めませんでした。」 ──▶ [メニュー]
-      │      │                                   └ 戻る・Esc ──▶ [メニュー]
-      │      └── セッションを覗く ──▶ [選択] ── 名前 ──▶ [pager] ── q ──▶ [再読み込み／戻る]
-      │                                │                     ▲              │ 再読み込み
+      │      │      │                         └ Back・Esc ──▶ [Menu]
+      │      │      └── Stop session ──▶ [notice + choose]
+      │      │                                   │ 0 sessions ──▶ "No agent sessions are running." ──▶ [Menu]
+      │      │                                   │ name・Stop all ──▶ [confirm]
+      │      │                                   │     Yes ──▶ (stop) ──▶ "Stopped." ──▶ [Menu]
+      │      │                                   │     No・Esc ──▶ "Nothing was stopped." ──▶ [Menu]
+      │      │                                   └ Back・Esc ──▶ [Menu]
+      │      └── Peek session ──▶ [choose] ── name ──▶ [pager] ── q ──▶ [Reload / Back]
+      │                                │                     ▲              │ Reload
       │                                │                     └──────────────┘
-      │                                └ 戻る・Esc／0 件 ──▶ [メニュー]     戻る・Esc ──▶ [メニュー]
-      └── 状態の一覧 ──▶ [pager] ── q ──▶ [再読み込み／戻る] ── 再読み込み ──▶ [pager]
-                                                         └── 戻る・Esc ──▶ [メニュー]
+      │                                └ Back・Esc / 0 sessions ──▶ [Menu]   Back・Esc ──▶ [Menu]
+      └── Status ──▶ [pager] ── q ──▶ [Reload / Back] ── Reload ──▶ [pager]
+                                                         └── Back・Esc ──▶ [Menu]
 
-   バックエンドの失敗（終了コード 2・3・4・その他）: 赤い文言を出して [メニュー] へ
-```
+   Backend failure (exit code 2, 3, 4, other): print a red message and return to [Menu]
 
 ## 遷移の表
 
@@ -74,45 +72,45 @@
 | いる画面 | 操作 | 行き先 | 録画 |
 |---|---|---|---|
 | シェル | `versteck-remote-tui` | メニュー | menu-status |
-| シェル | `versteck-remote-tui`（認証 B） | 「パスワードを 1 回だけ聞きます」→ メニュー（上部が「認証: B」） | auth-b |
+| シェル | `versteck-remote-tui`（認証 B） | `Passwordless sudo is not available, so the sudo password is asked once.`→ メニュー（上部が `auth: B`） | auth-b |
 | シェル | `versteck-remote-tui`（バックエンドが無い・版が合わない・sudo に失敗・gum か jq が無い） | 文言 → ログインシェル（確認なし） | no-menu（バックエンドが無い場合だけ） |
-| メニュー | ↑↓ で「状態の一覧」・Enter | 状態の一覧（pager） | menu-status |
-| メニュー | 「セッションを覗く」・Enter | 覗くセッションの選択 | peek |
-| メニュー | 「セッションを止める」・Enter | 注意書き + 止めるセッションの選択 | stop-one |
-| メニュー | 「監査ログ」・Enter | 絞り方の選択 | audit |
-| メニュー | 「止め方の手順」・Enter | 止め方の手順（pager） | kill-switches |
-| メニュー | 「シェルへ降りる」・Enter | 注意書き + 確認 | shell |
-| メニュー | 「終了」・Enter | TUI を終える（終了コード 0） | menu-status |
-| メニュー | Esc | TUI を終える（gum が「nothing selected」を出す。終了コード 0 はコードから読んだもの） | peek |
-| メニュー | Ctrl-C | TUI を終える（終了コード 0） | kill-switches |
-| 状態の一覧（pager） | q・Esc | 「再読み込み／戻る」の選択 | menu-status（q） |
-| 「再読み込み／戻る」（状態） | 「再読み込み」・Enter | 状態の一覧（取り直す） | menu-status |
-| 「再読み込み／戻る」（状態） | 「戻る」・Enter・Esc | メニュー | menu-status（戻る） |
+| メニュー | ↑↓ で `Status`・Enter | 状態の一覧（pager） | menu-status |
+| メニュー | `Peek session`・Enter | 覗くセッションの選択 | peek |
+| メニュー | `Stop session`・Enter | 注意書き + 止めるセッションの選択 | stop-one |
+| メニュー | `Audit log`・Enter | 絞り方の選択 | audit |
+| メニュー | `Kill switches`・Enter | 止め方の手順（pager） | kill-switches |
+| メニュー | `Drop to shell`・Enter | 注意書き + 確認 | shell |
+| メニュー | `Quit`・Enter | TUI を終える（終了コード 0） | menu-status |
+| メニュー | Esc | TUI を終える（終了コード 0 はコードから読んだもの）。gum が出す `nothing selected` の行は TUI が消す | peek |
+| メニュー | Ctrl-C | TUI を終える（終了コード 130） | kill-switches |
+| 状態の一覧（pager） | q・Esc | `Reload` / `Back` の選択 | menu-status（q） |
+| `Reload` / `Back`（状態） | `Reload`・Enter | 状態の一覧（取り直す） | menu-status |
+| `Reload` / `Back`（状態） | `Back`・Enter・Esc | メニュー | menu-status（戻る） |
 | 覗くセッションの選択 | 名前・Enter | セッションの画面（pager） | peek |
-| 覗くセッションの選択 | 「戻る」・Enter・Esc | メニュー | なし |
-| 覗くセッションの選択 | （セッションが 0 件） | 「ありません」→ メニュー | なし |
-| セッションの画面（pager） | q・Esc | 「再読み込み／戻る」の選択 | peek（q） |
-| 「再読み込み／戻る」（覗く） | 「再読み込み」 | セッションの画面（取り直す） | peek |
-| 「再読み込み／戻る」（覗く） | 「戻る」・Esc | メニュー | peek（戻る） |
-| 止めるセッションの選択 | 名前・Enter | 確認（セッション「名前」を止めますか？） | stop-one |
-| 止めるセッションの選択 | 「すべて止める」・Enter | 確認（N 件すべて止めますか？） | stop-all |
-| 止めるセッションの選択 | 「戻る」・Enter・Esc | メニュー | narrow-80（戻る） |
-| 止めるセッションの選択 | （セッションが 0 件） | 「ありません」→ メニュー（選択は出ない） | stop-empty |
-| 止める確認 | ← で「はい」・Enter（または y） | 止める →「止めました。」とバックエンドの出力 → メニュー | stop-one・stop-all |
-| 止める確認 | Enter（既定は「いいえ」）・n・Esc | 「止めませんでした。」→ メニュー | stop-one（Enter） |
-| 絞り方の選択 | 「すべて」・「失敗だけ」 | 監査ログ（pager） | audit |
-| 絞り方の選択 | 「エージェント名で絞る」 | エージェント名の filter | audit |
-| 絞り方の選択 | 「戻る」・Esc | メニュー | audit（戻る） |
+| 覗くセッションの選択 | `Back`・Enter・Esc | メニュー | なし |
+| 覗くセッションの選択 | （セッションが 0 件） | `No agent sessions are running.`→ メニュー | なし |
+| セッションの画面（pager） | q・Esc | `Reload` / `Back` の選択 | peek（q） |
+| `Reload` / `Back`（覗く） | `Reload` | セッションの画面（取り直す） | peek |
+| `Reload` / `Back`（覗く） | `Back`・Esc | メニュー | peek（戻る） |
+| 止めるセッションの選択 | 名前・Enter | 確認（`Stop session "名前"?`） | stop-one |
+| 止めるセッションの選択 | `Stop all`・Enter | 確認（`Stop all N agent session(s)?`） | stop-all |
+| 止めるセッションの選択 | `Back`・Enter・Esc | メニュー | narrow-80（戻る） |
+| 止めるセッションの選択 | （セッションが 0 件） | `No agent sessions are running.`→ メニュー（選択は出ない） | stop-empty |
+| 止める確認 | ← で `Yes`・Enter（または y） | 止める →`Stopped.` とバックエンドの出力 → メニュー | stop-one・stop-all |
+| 止める確認 | Enter（既定は `No`）・n・Esc | `Nothing was stopped.`→ メニュー | stop-one（Enter） |
+| 絞り方の選択 | `All`・`Failures only` | 監査ログ（pager） | audit |
+| 絞り方の選択 | `Filter by agent` | エージェント名の filter | audit |
+| 絞り方の選択 | `Back`・Esc | メニュー | audit（戻る） |
 | エージェント名の filter | 文字を打って絞る・Enter | 監査ログ（pager。見出しに名前） | audit |
 | エージェント名の filter | Esc | 絞り方の選択 | なし |
 | 監査ログ（pager） | q・Esc | 絞り方の選択 | audit（q） |
 | 止め方の手順（pager） | q・Esc | メニュー | kill-switches（q） |
-| シェルへ降りる確認 | ← で「はい」・Enter（または y） | ログインシェル（`VERSTECK_REMOTE_TUI_SKIP=1`） | shell |
-| シェルへ降りる確認 | Enter（既定は「いいえ」）・n・Esc | メニュー（文言なし） | shell |
-| 各画面 | バックエンドが終了コード 3 | 「対象が見つかりません（終了コード 3）。…」→ メニュー | errors（覗く・止める） |
-| 各画面 | バックエンドが終了コード 4 | 「情報を取得できませんでした（終了コード 4）。…」→ メニュー | error-4（状態の一覧） |
+| シェルへ降りる確認 | ← で `Yes`・Enter（または y） | ログインシェル（`VERSTECK_REMOTE_TUI_SKIP=1`） | shell |
+| シェルへ降りる確認 | Enter（既定は `No`）・n・Esc | `Did not drop to a shell.` → メニュー | shell |
+| 各画面 | バックエンドが終了コード 3 | `Target not found (exit code 3). …`→ メニュー | errors（覗く・止める） |
+| 各画面 | バックエンドが終了コード 4 | `Could not get the information (exit code 4). …`→ メニュー | error-4（状態の一覧） |
 | 各画面 | バックエンドが終了コード 2・その他 | 終了コードに応じた文言 → メニュー | なし |
-| 選択・確認・filter の画面 | Ctrl-C | 選択・確認と同じく「戻る／いいえ」の扱い（gum が 0 以外で終わるため） | なし（メニューの Ctrl-C だけ録画） |
+| 選択・確認・filter の画面 | Ctrl-C | 選択・確認と同じく `Back` / `No` の扱い（gum が 0 以外で終わるため） | なし（メニューの Ctrl-C だけ録画） |
 
 ## 画面
 
@@ -122,21 +120,21 @@
 
 起動すると、上部に版・認証の方式・バックエンドのパスを出し、その下に 7 つの項目を並べます。認証の表示は 3 通りです。
 
-- `認証: A（鍵のログインのみ・sudoers で許可）`
-- `認証: B（sudo のパスワード・60 秒ごとに更新）`（60 は `VERSTECK_TUI_SUDO_REFRESH`）
-- `認証: sudo なし`（`VERSTECK_TUI_SUDO=never`）
+- `auth: A (SSH key only, sudoers)`
+- `auth: B (sudo password, refreshed every 60 s)`（60 は `VERSTECK_TUI_SUDO_REFRESH`）
+- `auth: no sudo`（`VERSTECK_TUI_SUDO=never`）
 
 ```text
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -146,16 +144,16 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ```text
 > versteck-remote-tui
-パスワードなしの sudo では動かせないため、sudo のパスワードを 1 回だけ聞きます。
-versteck-remote-tui 0.0.0-dev | 認証: B（sudo のパスワード・60 秒ごとに更新）
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+Passwordless sudo is not available, so the sudo password is asked once.
+versteck-remote-tui 0.0.0-dev | auth: B (sudo password, refreshed every 60 s)
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -165,20 +163,20 @@ versteck-remote-tui 0.0.0-dev | 認証: B（sudo のパスワード・60 秒ご�
 
 ### 状態の一覧
 
-pager で見せます。q で閉じると「再読み込み／戻る」を選びます。再読み込みを選ぶと、バックエンドから取り直して pager を開き直します。
+pager で見せます。q で閉じると `Reload` / `Back` を選びます。再読み込みを選ぶと、バックエンドから取り直して pager を開き直します。
 
 ```text
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ 状態の一覧（取得 02:04:28）                                                               │
+│    1 │ Status (fetched 21:15:39)                                                                 │
 │    2 │                                                                                           │
-│    3 │ ホスト: example-vm                                                                        │
-│    4 │ 取得時刻: 2026-11-27T01:02:03Z                                                            │
-│    5 │ 人の入口: 稼働中 (active) sshd running                                                    │
-│    6 │ Tailscale: つながっている (connected) logged in                                           │
-│    7 │ ディスク:                                                                                 │
+│    3 │ Host: example-vm                                                                          │
+│    4 │ Generated at: 2026-11-27T01:02:03Z                                                        │
+│    5 │ Human entrance: active sshd running                                                       │
+│    6 │ Tailscale: connected logged in                                                            │
+│    7 │ Disks:                                                                                    │
 │    8 │   / 42%                                                                                   │
-│    9 │   /var 93% 残りわずか                                                                     │
-│   10 │ セッション: 2 件                                                                          │
+│    9 │   /var 93% nearly full                                                                    │
+│   10 │ Sessions: 2                                                                               │
 │   11 │   claude-1 claude-code 2026-11-27T00:00:00Z                                               │
 │   12 │   muse-1 muse 2026-11-26T23:00:00Z                                                        │
 │    ~ │                                                                                           │
@@ -202,9 +200,9 @@ pager で見せます。q で閉じると「再読み込み／戻る」を選び
 
 ```text
 > versteck-remote-tui
-状態の一覧
-> 再読み込み
-  戻る
+Status
+> Reload
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -214,14 +212,14 @@ pager で見せます。q で閉じると「再読み込み／戻る」を選び
 
 ### セッションを覗く
 
-セッションを選び、その画面の文字を pager で見せます。読み取り専用で、tmux attach はしません。q で閉じると「再読み込み／戻る」を選びます。
+セッションを選び、その画面の文字を pager で見せます。読み取り専用で、tmux attach はしません。q で閉じると `Reload` / `Back` を選びます。
 
 ```text
 > versteck-remote-tui
-覗くセッションを選んでください（読み取り専用）
+Choose a session to peek at (read-only)
 > claude-1
   muse-1
-  戻る
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -229,7 +227,7 @@ pager で見せます。q で閉じると「再読み込み／戻る」を選び
 
 ```text
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ セッション claude-1 の画面（読み取り専用・取得 02:05:35）                                 │
+│    1 │ Session claude-1 screen (read-only, fetched 21:16:40)                                     │
 │    2 │                                                                                           │
 │    3 │ screen of claude-1                                                                        │
 │    4 │ $ echo hi                                                                                 │
@@ -240,9 +238,9 @@ pager で見せます。q で閉じると「再読み込み／戻る」を選び
 
 ```text
 > versteck-remote-tui
-セッション claude-1
-> 再読み込み
-  戻る
+Session claude-1
+> Reload
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -252,21 +250,22 @@ pager で見せます。q で閉じると「再読み込み／戻る」を選び
 
 ### セッションを止める
 
-この画面に入るたびに、枠付きの注意書きを出します。確認の画面にも同じ注意書きを出します。確認の既定は「いいえ」です。
+この画面に入るたびに、枠付きの注意書きを出します。確認の画面にも同じ注意書きを出します。確認の既定は `No` です。
 
 #### 選ぶ
 
 ```text
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-止めるセッションを選んでください
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+Choose a session to stop
 > claude-1
   muse-1
-  すべて止める
-  戻る
+  Stop all
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -276,48 +275,52 @@ pager で見せます。q で閉じると「再読み込み／戻る」を選び
 
 ```text
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
- 止まるのはエージェントのセッションだけです。人の入口は止まりません。
- 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+ Only agent sessions are stopped. The human entrance keeps running.
+ The only sure way to stop everything is to stop the VM
+ (see Kill switches).
 
- セッション「claude-1」を止めますか？
+ Stop session "claude-1"?
 
-    はい        いいえ
+    Yes        No
 
-←→ toggle • enter submit • y はい • n いいえ
+←→ toggle • enter submit • y Yes • n No
 ```
 
-確認（すべて）は、最後の行が `エージェントのセッションを 2 件すべて止めますか？` になります。
+確認（すべて）は、最後の行が `Stop all 2 agent session(s)?` になります。
 
 #### 結果
 
-いいえ、はいの順に流したものです。「止めました。」の次の行はバックエンドの出力です。
+いいえ、はいの順に流したものです。`Stopped.` の次の行はバックエンドの出力です。
 
 ```text
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-止めませんでした。
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-止めました。
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+Nothing was stopped.
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+Stopped.
 stopped claude-1
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -329,20 +332,21 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ```text
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-動いているエージェントのセッションはありません。
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+No agent sessions are running.
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -356,17 +360,17 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ### 監査ログ
 
-絞り方を選び、pager で見せます。pager を閉じると絞り方の選択に戻ります。メニューへ戻るのは「戻る」か Esc です。
+絞り方を選び、pager で見せます。pager を閉じると絞り方の選択に戻ります。メニューへ戻るのは `Back` か Esc です。
 
 #### 絞り方の選択
 
 ```text
 > versteck-remote-tui
-監査ログ（最新 200 件まで・新しい順）
-> すべて
-  失敗だけ
-  エージェント名で絞る
-  戻る
+Audit log (latest 200 entries, newest first)
+> All
+  Failures only
+  Filter by agent
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -387,8 +391,8 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ```text
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ 監査ログ: すべて                                                                          │
-│    2 │ 時刻  結果  エージェント  コマンド  詳細                                                  │
+│    1 │ Audit log: All                                                                            │
+│    2 │ Time  Result  Agent  Command  Detail                                                      │
 │    3 │                                                                                           │
 │    4 │ 2026-11-27T00:40:00Z  ok  muse  ls                                                        │
 │    5 │ 2026-11-27T00:30:00Z  denied  muse  rm -rf /tmp/x  not allowed                            │
@@ -402,8 +406,8 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ```text
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ 監査ログ: 失敗だけ                                                                        │
-│    2 │ 時刻  結果  エージェント  コマンド  詳細                                                  │
+│    1 │ Audit log: Failures only                                                                  │
+│    2 │ Time  Result  Agent  Command  Detail                                                      │
 │    3 │                                                                                           │
 │    4 │ 2026-11-27T00:30:00Z  denied  muse  rm -rf /tmp/x  not allowed                            │
 │    5 │ 2026-11-27T00:20:00Z  error  claude-code  make test  exit 2                               │
@@ -415,8 +419,8 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ```text
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ 監査ログ: エージェント名で絞る (muse)                                                     │
-│    2 │ 時刻  結果  エージェント  コマンド  詳細                                                  │
+│    1 │ Audit log: Filter by agent (muse)                                                         │
+│    2 │ Time  Result  Agent  Command  Detail                                                      │
 │    3 │                                                                                           │
 │    4 │ 2026-11-27T00:40:00Z  ok  muse  ls                                                        │
 │    5 │ 2026-11-27T00:30:00Z  denied  muse  rm -rf /tmp/x  not allowed                            │
@@ -443,28 +447,26 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ### シェルへ降りる
 
-枠付きの注意書きを出し、確認します。既定は「いいえ」で、いいえならメニューへ戻ります。はいなら `VERSTECK_REMOTE_TUI_SKIP=1` を立てて `exec bash -l` します。
+枠付きの注意書きを出し、確認します。既定は `No` で、`No` ならメニューへ戻ります。`Yes` なら `VERSTECK_REMOTE_TUI_SKIP=1` を立てて `exec bash -l` します。
 
-注意書きの 2 行目が 100 桁より長いので、枠が折り返して崩れます（[実装との食い違い](#実装との食い違い)の 1）。下はそのままの文字です。
+注意書きは手で 4 行に分けてあり、枠は 72 桁です。100 桁にも 80 桁にも収まります。
 
 ```text
 > versteck-remote-tui
-┌───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┐
-│ シェルへ降ります。ここから先の操作は TUI を通らないため、TUI の記録の外です。
-      │
-│ sudo の更新は止めます。ログインシェルでメニューが再び出ないよう VERSTECK_REMOTE_TUI_SKIP=1 を立て
-ます。 │
-└───────────────────────────────────────────────────────────────────────────────────────────────────
-──────┘
- シェルへ降りますか？
+┌──────────────────────────────────────────────────────────────────────┐
+│ Dropping to a shell. Commands from here on do not go through         │
+│ the TUI, so they are outside the TUI record. The sudo refresh stops. │
+│ VERSTECK_REMOTE_TUI_SKIP=1 is set so that the menu does not          │
+│ start again in the login shell.                                      │
+└──────────────────────────────────────────────────────────────────────┘
+ Drop to a shell?
 
-    はい        いいえ
+    Yes        No
 
-←→ toggle • enter submit • y はい • n いいえ
+←→ toggle • enter submit • y Yes • n No
 ```
 
-「はい」を選んだ後の画面です。`root@example-vm` は録画のコンテナのプロンプトです。
+`Yes` を選んだ後の画面です。`root@example-vm` は録画のコンテナのプロンプトです。
 
 ```text
 root@example-vm:/src# echo VERSTECK_REMOTE_TUI_SKIP=$VERSTECK_REMOTE_TUI_SKIP
@@ -480,9 +482,9 @@ root@example-vm:/src#
 
 ```text
 > versteck-remote-tui
-バックエンドが見つかりません: /usr/local/sbin/versteck-ctl（versteck 側で入れるものです。VERSTECK_TU
-I_BACKEND で場所を変えられます）
-メニューを出せないので、シェルへ降ります（TUI の記録の外です）。
+Backend not found: /usr/local/sbin/versteck-ctl (it is installed on the versteck side; set VERSTECK_
+TUI_BACKEND to change the location)
+The menu cannot be shown, so dropping to a shell (outside the TUI record).
 root@example-vm:/src# echo VERSTECK_REMOTE_TUI_SKIP=$VERSTECK_REMOTE_TUI_SKIP
 VERSTECK_REMOTE_TUI_SKIP=1
 root@example-vm:/src#
@@ -499,28 +501,28 @@ root@example-vm:/src#
 一覧にはあるが、もう終わったセッション `gone-1` を覗いたときです。
 
 ```text
-覗くセッションを選んでください（読み取り専用）
+Choose a session to peek at (read-only)
   claude-1
   muse-1
 > gone-1
-  戻る
+  Back
 no such session: gone-1
-対象が見つかりません（終了コード 3）。セッションがすでに終わった可能性があります。
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+Target not found (exit code 3). The session may have already ended.
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
 ```
 
-この枠は選択の画面のコマと、その次のコマを 1 つにつないだものです（選択の画面は閉じると消えるので、テキスト出力の 1 コマには両方は残りません）。止める画面で `gone-1` を選んで「はい」にしたときも、同じ文言でメニューへ戻ります。
+この枠は選択の画面のコマと、その次のコマを 1 つにつないだものです（選択の画面は閉じると消えるので、テキスト出力の 1 コマには両方は残りません）。止める画面で `gone-1` を選んで `Yes` にしたときも、同じ文言でメニューへ戻ります。
 
 #### 終了コード 4
 
@@ -529,16 +531,16 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 ```text
 > versteck-remote-tui
 fake backend: failing with 4
-情報を取得できませんでした（終了コード 4）。バックエンドの下回りが失敗しています。
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+Could not get the information (exit code 4). The backend failed internally.
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -550,19 +552,20 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ### 80 桁で見たとき
 
-メニュー・止める画面の注意書き・pager は 80 桁に収まります。止める画面の枠は 78 桁で、ほぼ端までです。シェルへ降りる画面の注意書きは、100 桁と同じく折り返して崩れます。
+メニュー・止める画面の注意書き・pager は 80 桁に収まります。止める画面の枠は 70 桁、シェルへ降りる画面の枠は 72 桁で、どちらも収まります。
 
 ```text
 > versteck-remote-tui
-┌────────────────────────────────────────────────────────────────────────────┐
-│ 止まるのはエージェントのセッションだけです。人の入口は止まりません。       │
-│ 確実に止まるのは VM を止めることです（手順はメニューの「止め方の手順」）。 │
-└────────────────────────────────────────────────────────────────────────────┘
-止めるセッションを選んでください
+┌────────────────────────────────────────────────────────────────────┐
+│ Only agent sessions are stopped. The human entrance keeps running. │
+│ The only sure way to stop everything is to stop the VM             │
+│ (see Kill switches).                                               │
+└────────────────────────────────────────────────────────────────────┘
+Choose a session to stop
 > claude-1
   muse-1
-  すべて止める
-  戻る
+  Stop all
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -576,21 +579,27 @@ gum 0.17.0 の既定のキーです。各部品が画面の下に出す 1 行の
 
 | 部品 | 使う画面 | 画面の案内 | 確かめたこと |
 |---|---|---|---|
-| `gum choose` | メニュー・各選択 | `←↓↑→ navigate • enter submit` | ↑↓ と Enter で選べる。Esc で「nothing selected」を出して 0 以外で終わる。Ctrl-C でも 0 以外で終わる |
-| `gum confirm` | 止める・シェルへ降りる | `←→ toggle • enter submit • y はい • n いいえ` | ← で「はい」に移り、Enter で決まる。既定の「いいえ」のまま Enter で「いいえ」。y・n・Esc は録画していない |
+| `gum choose` | メニュー・各選択 | `←↓↑→ navigate • enter submit` | ↑↓ と Enter で選べる。Esc で 0 以外で終わり、gum が `nothing selected` を端末に出す（TUI がその行を消す。録画で確かめた）。Ctrl-C でも 0 以外で終わる |
+| `gum confirm` | 止める・シェルへ降りる | `←→ toggle • enter submit • y Yes • n No` | ← で `Yes` に移り、Enter で決まる。既定の `No` のまま Enter で `No`。y・n・Esc は録画していない |
 | `gum filter` | 監査ログのエージェント名 | `↓↑ navigate • esc blur search • enter submit` | 打った文字で候補が絞られ、Enter で決まる。Esc は録画していない |
 | `gum pager` | 状態の一覧・覗く・監査ログ・止め方の手順 | `↓↑ navigate • esc quit • / search` | q で閉じる。Esc・`/` は録画していない |
 
-TUI の側では、選択・確認・filter が 0 以外で終わったとき（Esc・Ctrl-C）を「戻る」「いいえ」と同じに扱います。メニューでは「終了」と同じで、TUI は終了コード 0 で終わります。
+TUI の側では、選択・確認・filter が 0 以外で終わったとき（Esc・Ctrl-C）を `Back` / `No` と同じに扱います。メニューの Esc は `Quit` と同じで、TUI は終了コード 0 で終わります。メニューの Ctrl-C だけは、TUI が終了コード 130 で終わります（kill-switches の録画で `echo $?` が 130）。
 
 ## 実装との食い違い
 
-録画で見つけた、設計として見直したほうがよさそうな所です。この文書を足した PR ではコードを直していません。
+録画で見つけた、設計として見直したほうがよさそうな所です。録画を撮り直した時点でコードに残っていたものだけを書きます。
 
-1. **シェルへ降りる画面の注意書きが 100 桁に収まらない。** 2 行目（`sudo の更新は止めます。…を立てます。`）が 100 桁を超えるため、`gum style --border` の枠が折り返して崩れます。80 桁でも同じです。止める画面の注意書き（枠は 78 桁）は 80 桁にも収まります。
-2. **メニューで Ctrl-C を押しても、終了コードは 0。** gum が 0 以外で終わると、TUI はそれを「終了」と同じに扱うためです（`vrt_tui` の `|| break`）。シェルから見ると、Ctrl-C で抜けたのか「終了」を選んだのかを区別できません。
-3. **Esc で抜けると、gum の「nothing selected」が端末に残る。** gum 0.17.0 の `choose` の振る舞いです。メニューで Esc を押して TUI を終えたときに出ます。
-4. **シェルへ降りる確認で「いいえ」を選んでも、文言が出ない。** 止める画面は「止めませんでした。」を出してからメニューへ戻りますが、シェルへ降りる画面は何も出さずにメニューへ戻ります。
+前の版にあった次の 4 点は、いまのコードと録画では起きていません。
+
+1. シェルへ降りる画面の注意書きの枠が折り返して崩れる点は、注意書きを 4 行に分けて直っています（shell・narrow-80 の録画）。
+2. メニューの Ctrl-C の終了コードは 130 です（kill-switches の録画）。
+3. Esc で抜けたとき、gum の `nothing selected` は端末に残りません（peek の録画。`Esc` の直後、起動した行のすぐ下にプロンプトが出る）。
+4. シェルへ降りる確認で `No` を選ぶと `Did not drop to a shell.` が出ます（shell の録画）。
+
+別の食い違いが 1 つあります。
+
+- 偽のバックエンドの `kill-switches` の出力は日本語の手順書です。これはバックエンド側の文言なので、TUI の英語化では変えていません。止め方の手順の録画にだけ日本語が出ます。
 
 ## 録画の作り方
 
