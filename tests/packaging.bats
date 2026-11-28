@@ -13,17 +13,18 @@ real_gum() {
 @test "本物の gum format が Markdown を描ける" {
   local g
   g=$(real_gum) || skip "gum が無い"
-  run "$g" format <<<"# 止め方の手順"
+  run "$g" format <<<"# Kill switches"
   [ "$status" -eq 0 ]
-  [[ $output == *"止め方の手順"* ]]
+  # gum format styles each word separately, so check the words, not the phrase
+  [[ $output == *"Kill"* && $output == *"switches"* ]]
 }
 
 @test "本物の gum style が文字を出せる" {
   local g
   g=$(real_gum) || skip "gum が無い"
-  run "$g" style --bold --border normal --padding "0 1" "人の入口は止まりません"
+  run "$g" style --bold --border normal --padding "0 1" "The human entrance keeps running"
   [ "$status" -eq 0 ]
-  [[ $output == *"人の入口は止まりません"* ]]
+  [[ $output == *"The human entrance keeps running"* ]]
 }
 
 @test "make install で置いたものが動く（bin から ../lib を見つける）" {

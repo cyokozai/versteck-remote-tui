@@ -42,11 +42,11 @@ vrt_backend() {
 vrt_backend_error_message() {
   local rc=$1
   case $rc in
-    2) echo "バックエンドが使い方の誤りを返しました（終了コード 2）。TUI とバックエンドの版が合っていない可能性があります。" ;;
-    3) echo "対象が見つかりません（終了コード 3）。セッションがすでに終わった可能性があります。" ;;
-    4) echo "情報を取得できませんでした（終了コード 4）。バックエンドの下回りが失敗しています。" ;;
-    126 | 127) echo "バックエンドを実行できません（終了コード $rc）: $(vrt_backend_path)" ;;
-    *) echo "予期しない失敗です（終了コード $rc）。" ;;
+    2) echo "The backend reported a usage error (exit code 2). The TUI and the backend may be different versions." ;;
+    3) echo "Target not found (exit code 3). The session may have already ended." ;;
+    4) echo "Could not get the information (exit code 4). The backend failed internally." ;;
+    126 | 127) echo "Cannot run the backend (exit code $rc): $(vrt_backend_path)" ;;
+    *) echo "Unexpected failure (exit code $rc)." ;;
   esac
 }
 

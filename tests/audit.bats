@@ -47,7 +47,7 @@ setup() {
 }
 
 @test "監査ログの画面: 失敗だけを選ぶと pager に失敗の行だけが出る" {
-  gum_answers "失敗だけ" "戻る"
+  gum_answers "Failures only" "Back"
   run vrt_screen_audit
   [ "$status" -eq 0 ]
   [[ "$(backend_log)" == *"[audit] [--json] [--limit] [200]"* ]]
@@ -57,7 +57,7 @@ setup() {
 }
 
 @test "監査ログの画面: エージェント名を gum filter で選んで絞る" {
-  gum_answers "エージェント名で絞る" "muse" "戻る"
+  gum_answers "Filter by agent" "muse" "Back"
   run vrt_screen_audit
   [[ "$(gum_log)" == *"gum [filter]"* ]]
   [[ "$(pager_out)" == *"rm -rf /tmp/x"* ]]
@@ -67,15 +67,15 @@ setup() {
 @test "監査ログの画面: 該当なしならその旨を出す" {
   printf '%s\n' '{"time":"2026-11-27T00:10:00Z","agent":"muse","command":"ls","result":"ok"}' >"$BATS_TEST_TMPDIR/ok.jsonl"
   export FAKE_AUDIT_JSONL="$BATS_TEST_TMPDIR/ok.jsonl"
-  gum_answers "失敗だけ" "戻る"
+  gum_answers "Failures only" "Back"
   run vrt_screen_audit
-  [[ "$(pager_out)" == *"該当する記録はありません"* ]]
+  [[ "$(pager_out)" == *"No matching entries"* ]]
 }
 
 @test "監査ログの画面: 取得に失敗したら文言を出して戻る" {
   export FAKE_BACKEND_FAIL=4
   run vrt_screen_audit
-  [[ $output == *"取得できませんでした"* ]]
+  [[ $output == *"Could not get the information"* ]]
   [ -z "$(pager_out)" ]
 }
 
@@ -105,7 +105,7 @@ setup() {
   printf '%s\n' '{"time":"t1","agent":"ev\u001bil","command":"evil-cmd","result":"ok"}' \
     '{"time":"t2","agent":"muse","command":"ls","result":"ok"}' >"$BATS_TEST_TMPDIR/a.jsonl"
   export FAKE_AUDIT_JSONL="$BATS_TEST_TMPDIR/a.jsonl"
-  gum_answers "エージェント名で絞る" "ev?il" "戻る"
+  gum_answers "Filter by agent" "ev?il" "Back"
   run vrt_screen_audit
   [[ "$(pager_out)" == *"evil-cmd"* ]]
   [[ "$(pager_out)" != *"  ls"* ]]

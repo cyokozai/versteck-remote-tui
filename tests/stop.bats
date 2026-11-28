@@ -8,13 +8,13 @@ setup() {
 }
 
 assert_notice() {
-  [[ $output == *"人の入口は止まりません"* ]]
-  [[ $output == *"確実に止まるのは VM を止めることです"* ]]
+  [[ $output == *"The human entrance keeps running"* ]]
+  [[ $output == *"The only sure way to stop everything is to stop the VM"* ]]
 }
 
 @test "注意書きは定数に 2 つの文を持つ" {
-  [[ $VRT_STOP_NOTICE == *"人の入口は止まりません"* ]]
-  [[ $VRT_STOP_NOTICE == *"確実に止まるのは VM を止めることです"* ]]
+  [[ $VRT_STOP_NOTICE == *"The human entrance keeps running"* ]]
+  [[ $VRT_STOP_NOTICE == *"The only sure way to stop everything is to stop the VM"* ]]
 }
 
 @test "セッションが無くても注意書きを出す" {
@@ -23,14 +23,14 @@ assert_notice() {
   run vrt_screen_stop
   [ "$status" -eq 0 ]
   assert_notice
-  [[ $output == *"動いているエージェントのセッションはありません"* ]]
+  [[ $output == *"No agent sessions are running"* ]]
 }
 
 @test "状態が取れなくても注意書きを出す" {
   export FAKE_BACKEND_FAIL=4
   run vrt_screen_stop
   assert_notice
-  [[ $output == *"取得できませんでした"* ]]
+  [[ $output == *"Could not get the information"* ]]
 }
 
 @test "確認で「いいえ」なら止めない" {
@@ -39,7 +39,7 @@ assert_notice() {
   [ "$status" -eq 0 ]
   assert_notice
   [[ "$(backend_log)" != *"[stop]"* ]]
-  [[ $output == *"止めませんでした"* ]]
+  [[ $output == *"Nothing was stopped"* ]]
 }
 
 @test "確認を Esc で抜けても止めない" {
@@ -55,29 +55,29 @@ assert_notice() {
   assert_notice
   [[ "$(backend_log)" == *"[stop] [claude-1]"* ]]
   [[ "$(backend_log)" != *"[--all]"* ]]
-  [[ $output == *"止めました"* ]]
+  [[ $output == *"Stopped."* ]]
 }
 
 @test "確認の問いにも注意書きを入れる" {
   gum_answers "claude-1" "no"
   run vrt_screen_stop
-  grep '^gum \[confirm\]' "$FAKE_LOG_DIR/gum.log" | grep -q "人の入口は止まりません"
+  grep '^gum \[confirm\]' "$FAKE_LOG_DIR/gum.log" | grep -q "The human entrance keeps running"
 }
 
 @test "すべて止めるも確認付き。「いいえ」なら止めない" {
-  gum_answers "すべて止める" "no"
+  gum_answers "Stop all" "no"
   run vrt_screen_stop
   [[ "$(backend_log)" != *"[stop]"* ]]
 }
 
 @test "すべて止めるで「はい」なら stop --all" {
-  gum_answers "すべて止める" "yes"
+  gum_answers "Stop all" "yes"
   run vrt_screen_stop
   [[ "$(backend_log)" == *"[stop] [--all]"* ]]
 }
 
 @test "戻るを選べば何もしない" {
-  gum_answers "戻る"
+  gum_answers "Back"
   run vrt_screen_stop
   [ "$status" -eq 0 ]
   [[ "$(backend_log)" != *"[stop]"* ]]
@@ -94,18 +94,18 @@ EOF
   chmod +x "$BATS_TEST_TMPDIR/backend"
   export VERSTECK_TUI_BACKEND="$BATS_TEST_TMPDIR/backend"
   run vrt_screen_stop
-  [[ $output == *"対象が見つかりません"* ]]
+  [[ $output == *"Target not found"* ]]
 }
 
 @test "検査を通らない名前はバックエンドに渡さず、弾いた件数を出す" {
   echo '{"sessions":[{"name":"bad;rm"},{"name":"claude-1"},{"agent":"noname"}]}' >"$BATS_TEST_TMPDIR/bad.json"
   export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/bad.json"
-  gum_answers "戻る"
+  gum_answers "Back"
   run vrt_screen_stop
   [ "$status" -eq 0 ]
-  [[ $output == *"名前の形が合わないセッションが 2 件あり、一覧に出していません"* ]]
-  [[ $output != *"動いているエージェントのセッションはありません"* ]]
-  grep '^gum \[choose\]' "$FAKE_LOG_DIR/gum.log" | grep -qF '[claude-1] [すべて止める] [戻る]'
+  [[ $output == *"2 session(s) have a malformed name and are not listed"* ]]
+  [[ $output != *"No agent sessions are running"* ]]
+  grep '^gum \[choose\]' "$FAKE_LOG_DIR/gum.log" | grep -qF '[claude-1] [Stop all] [Back]'
   [[ "$(grep '^gum \[choose\]' "$FAKE_LOG_DIR/gum.log")" != *"bad;rm"* ]]
   [[ "$(backend_log)" != *"[stop]"* ]]
 }
@@ -113,21 +113,21 @@ EOF
 @test "一覧に出せる名前が 0 件でも「すべて止める」を選べる" {
   echo '{"sessions":[{"name":"bad;rm"}]}' >"$BATS_TEST_TMPDIR/bad.json"
   export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/bad.json"
-  gum_answers "すべて止める" "yes"
+  gum_answers "Stop all" "yes"
   run vrt_screen_stop
   [ "$status" -eq 0 ]
-  [[ $output == *"名前の形が合わないセッションが 1 件"* ]]
+  [[ $output == *"1 session(s) have a malformed name"* ]]
   [[ "$(backend_log)" == *"[stop] [--all]"* ]]
-  [[ "$(gum_log)" == *"1 件すべて止めますか？"*"（名前の形が合わない 1 件を含みます）"* ]]
+  [[ "$(gum_log)" == *"Stop all 1 agent session(s)?"*"(includes 1 with a malformed name)"* ]]
 }
 
 @test "セッションが 0 件でも「すべて止める」を選べる" {
   echo '{"sessions":[]}' >"$BATS_TEST_TMPDIR/empty.json"
   export FAKE_STATUS_JSON="$BATS_TEST_TMPDIR/empty.json"
-  gum_answers "すべて止める" "yes"
+  gum_answers "Stop all" "yes"
   run vrt_screen_stop
   [ "$status" -eq 0 ]
-  [[ $output == *"動いているエージェントのセッションはありません"* ]]
+  [[ $output == *"No agent sessions are running"* ]]
   [[ "$(backend_log)" == *"[stop] [--all]"* ]]
 }
 
@@ -140,8 +140,8 @@ EOF
     run vrt_screen_stop
     [ "$status" -eq 0 ]
     assert_notice
-    [[ $output == *"セッションの一覧を取得できませんでした"* ]] || { echo "文が無い: $j"; return 1; }
-    [[ $output != *"ありません"* ]]
+    [[ $output == *"Could not get the session list"* ]] || { echo "文が無い: $j"; return 1; }
+    [[ $output != *"No agent sessions are running"* ]]
     [ -z "$(grep '^gum \[choose\]' "$FAKE_LOG_DIR/gum.log")" ]
   done
 }
@@ -171,7 +171,7 @@ EOF
   export VERSTECK_TUI_BACKEND="$BATS_TEST_TMPDIR/backend"
   run vrt_screen_stop
   [ "$status" -eq 0 ]
-  [[ $output == *"止めました"* ]]
+  [[ $output == *"Stopped."* ]]
   [[ $output == *"--all stopped"* ]]
   [[ $output != *"fake gum"* ]]
 }
@@ -179,5 +179,5 @@ EOF
 @test "確認は --default=false（既定は「いいえ」）と、はい・いいえの文言で聞く" {
   gum_answers "claude-1" "no"
   run vrt_screen_stop
-  grep -qF 'gum [confirm] [--default=false] [--affirmative] [はい] [--negative] [いいえ] [--]' "$FAKE_LOG_DIR/gum.log"
+  grep -qF 'gum [confirm] [--default=false] [--affirmative] [Yes] [--negative] [No] [--]' "$FAKE_LOG_DIR/gum.log"
 }

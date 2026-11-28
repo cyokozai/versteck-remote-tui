@@ -11,9 +11,9 @@ VRT_KEEPALIVE_PID=""
 
 vrt_auth_label() {
   case $VRT_AUTH_MODE in
-    A) echo "認証: A（鍵のログインのみ・sudoers で許可）" ;;
-    B) echo "認証: B（sudo のパスワード・${VERSTECK_TUI_SUDO_REFRESH:-60} 秒ごとに更新）" ;;
-    *) echo "認証: sudo なし" ;;
+    A) echo "auth: A (SSH key only, sudoers)" ;;
+    B) echo "auth: B (sudo password, refreshed every ${VERSTECK_TUI_SUDO_REFRESH:-60} s)" ;;
+    *) echo "auth: no sudo" ;;
   esac
 }
 
@@ -25,12 +25,12 @@ vrt_auth_init() {
   local purpose=${1:-tui} be
   VRT_AUTH_ERROR=""
   if [[ ! ${VERSTECK_TUI_SUDO_REFRESH:-60} =~ ^[1-9][0-9]*$ ]]; then
-    VRT_AUTH_ERROR="VERSTECK_TUI_SUDO_REFRESH の値が不正です: ${VERSTECK_TUI_SUDO_REFRESH}（1 以上の整数の秒。sudo の timestamp_timeout より短くする）"
+    VRT_AUTH_ERROR="Invalid value for VERSTECK_TUI_SUDO_REFRESH: ${VERSTECK_TUI_SUDO_REFRESH} (an integer of 1 or more, in seconds; keep it shorter than sudo timestamp_timeout)"
     return 2
   fi
   be=$(vrt_backend_path)
   if [[ ! -e $be ]]; then
-    VRT_AUTH_ERROR="バックエンドが見つかりません: $be（versteck 側で入れるものです。VERSTECK_TUI_BACKEND で場所を変えられます）"
+    VRT_AUTH_ERROR="Backend not found: $be (it is installed on the versteck side; set VERSTECK_TUI_BACKEND to change the location)"
     return 4
   fi
   case ${VERSTECK_TUI_SUDO:-auto} in
@@ -41,20 +41,20 @@ vrt_auth_init() {
       if sudo -k -n -- "$be" interface-version >/dev/null 2>&1; then
         VRT_AUTH_MODE=A
       elif [[ $purpose == tui ]] || vrt_is_tty; then
-        echo "パスワードなしの sudo では動かせないため、sudo のパスワードを 1 回だけ聞きます。" >&2
+        echo "Passwordless sudo is not available, so the sudo password is asked once." >&2
         if ! sudo -v; then
-          VRT_AUTH_ERROR="sudo の確認に失敗しました。パスワードが違うか、このユーザーにバックエンドを動かす権限がありません。"
+          VRT_AUTH_ERROR="sudo check failed. The password is wrong, or this user is not allowed to run the backend."
           return 4
         fi
         VRT_AUTH_MODE=B
         [[ $purpose == tui ]] && vrt_keepalive_start
       else
-        VRT_AUTH_ERROR="パスワードなしの sudo でバックエンドを実行できません。端末から対話で起動するか、versteck 側の sudoers を確かめてください。"
+        VRT_AUTH_ERROR="Cannot run the backend with passwordless sudo. Start it interactively from a terminal, or check sudoers on the versteck side."
         return 4
       fi
       ;;
     *)
-      VRT_AUTH_ERROR="VERSTECK_TUI_SUDO の値が不正です: ${VERSTECK_TUI_SUDO}（auto か never）"
+      VRT_AUTH_ERROR="Invalid value for VERSTECK_TUI_SUDO: ${VERSTECK_TUI_SUDO} (auto or never)"
       return 2
       ;;
   esac
@@ -67,12 +67,12 @@ vrt_check_interface() {
   out=$(vrt_backend interface-version 2>/dev/null)
   rc=$?
   if ((rc != 0)); then
-    VRT_AUTH_ERROR="バックエンドの版を確かめられません。$(vrt_backend_error_message "$rc")"
+    VRT_AUTH_ERROR="Cannot check the backend version. $(vrt_backend_error_message "$rc")"
     return 4
   fi
   if ! printf '%s' "$out" | jq -e --argjson v "$VRT_INTERFACE_VERSION" \
     'type == "object" and .interface == $v' >/dev/null 2>&1; then
-    VRT_AUTH_ERROR="バックエンドのインターフェースの版が合いません（この TUI が期待する版: $VRT_INTERFACE_VERSION、返った値: $(printf '%s' "$out" | head -c 200 | vrt_sanitize_text)）"
+    VRT_AUTH_ERROR="Backend interface version mismatch (this TUI expects: $VRT_INTERFACE_VERSION, got: $(printf '%s' "$out" | head -c 200 | vrt_sanitize_text))"
     return 4
   fi
 }

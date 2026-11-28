@@ -18,7 +18,7 @@ vrt_ui_say() {
 }
 
 vrt_ui_confirm() {
-  gum confirm --default=false --affirmative "はい" --negative "いいえ" -- "$1"
+  gum confirm --default=false --affirmative "Yes" --negative "No" -- "$1"
 }
 
 vrt_stderr_is_tty() {
@@ -40,7 +40,7 @@ vrt_ui_choose() {
 }
 
 vrt_menu_header() {
-  printf 'versteck-remote-tui %s | %s\nバックエンド: %s' \
+  printf 'versteck-remote-tui %s | %s\nBackend: %s' \
     "$VRT_VERSION" "$(vrt_auth_label)" "$(vrt_backend_path)"
 }
 
@@ -51,8 +51,8 @@ vrt_tui() {
   vrt_have_command gum || missing+=(gum)
   vrt_have_command jq || missing+=(jq)
   if ((${#missing[@]} > 0)); then
-    printf '%s が見つかりません。メニューを出せないので、シェルへ降ります（TUI の記録の外です）。\n' \
-      "$(vrt_join " と " "${missing[@]}")" >&2
+    printf '%s not found. The menu cannot be shown, so dropping to a shell (outside the TUI record).\n' \
+      "$(vrt_join " and " "${missing[@]}")" >&2
     vrt_drop_to_shell
     return 1
   fi
@@ -60,14 +60,14 @@ vrt_tui() {
   rc=$?
   if ((rc != 0)); then
     vrt_ui_error "$VRT_AUTH_ERROR"
-    echo "メニューを出せないので、シェルへ降ります（TUI の記録の外です）。" >&2
+    echo "The menu cannot be shown, so dropping to a shell (outside the TUI record)." >&2
     vrt_drop_to_shell
     return 1
   fi
   while :; do
     choice=$(vrt_ui_choose --header="$(vrt_menu_header)" -- \
-      "状態の一覧" "セッションを覗く" "セッションを止める" "監査ログ" \
-      "止め方の手順" "シェルへ降りる" "終了")
+      "Status" "Peek session" "Stop session" "Audit log" \
+      "Kill switches" "Drop to shell" "Quit")
     rc=$?
     if ((rc == 130)); then
       vrt_auth_cleanup
@@ -75,12 +75,12 @@ vrt_tui() {
     fi
     ((rc == 0)) || break
     case $choice in
-      "状態の一覧") vrt_screen_status ;;
-      "セッションを覗く") vrt_screen_peek ;;
-      "セッションを止める") vrt_screen_stop ;;
-      "監査ログ") vrt_screen_audit ;;
-      "止め方の手順") vrt_screen_kill_switches ;;
-      "シェルへ降りる") vrt_screen_shell ;;
+      "Status") vrt_screen_status ;;
+      "Peek session") vrt_screen_peek ;;
+      "Stop session") vrt_screen_stop ;;
+      "Audit log") vrt_screen_audit ;;
+      "Kill switches") vrt_screen_kill_switches ;;
+      "Drop to shell") vrt_screen_shell ;;
       *) break ;;
     esac
   done

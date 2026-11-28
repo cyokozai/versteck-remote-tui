@@ -97,20 +97,20 @@ teardown() {
 
 @test "TUI を抜けると背景の更新は残らない（「終了」の後始末）" {
   export FAKE_SUDO_MODE=password
-  gum_answers "終了"
+  gum_answers "Quit"
   run bash -c '
     for f in "$1"/lib/versteck-remote-tui/*.sh; do source "$f"; done
     vrt_is_tty() { return 0; }
     vrt_main' _ "$REPO_ROOT"
   [ "$status" -eq 0 ]
-  [[ "$(gum_log)" == *"認証: B"* ]]
+  [[ "$(gum_log)" == *"auth: B"* ]]
   sleep 0.3
   [ -z "$(sleep_pids 37)" ]
 }
 
 @test "後始末を通らずにプロセスが終わっても、EXIT の trap で背景の更新は残らない" {
   export FAKE_SUDO_MODE=password
-  gum_answers "状態の一覧"
+  gum_answers "Status"
   # 画面の途中で exit する（vrt_tui の後始末の行には届かない）。
   # trap が効かないと背景の更新が出力を握ったまま残るので、run ではなくファイルに受けて待たずに進む
   local rc=0
@@ -130,7 +130,7 @@ teardown() {
   vrt_is_tty() { return 0; }
   vrt__exec_login_shell() { echo "SHELL-EXEC skip=$VERSTECK_REMOTE_TUI_SKIP"; }
   run vrt_main
-  [[ $output == *"sudo の確認に失敗しました"* ]]
+  [[ $output == *"sudo check failed"* ]]
   [[ $output == *"SHELL-EXEC skip=1"* ]]
 }
 
@@ -138,7 +138,7 @@ teardown() {
   export FAKE_SUDO_MODE=password
   run vrt_run_text status </dev/null
   [ "$status" -eq 4 ]
-  [[ $output == *"パスワードなしの sudo"* ]]
+  [[ $output == *"passwordless sudo"* ]]
   [[ "$(sudo_log)" != *"[-v]"* ]]
 }
 
@@ -148,14 +148,14 @@ teardown() {
   [ "$status" -ne 0 ]
   run vrt_run_text status
   [ "$status" -eq 4 ]
-  [[ $output == *"インターフェースの版が合いません"* ]]
+  [[ $output == *"interface version mismatch"* ]]
 }
 
 @test "バックエンドが無ければ、パスワードを聞く前にその旨を出す" {
   export VERSTECK_TUI_BACKEND=/nonexistent/versteck-ctl
   run vrt_run_text status
   [ "$status" -eq 4 ]
-  [[ $output == *"バックエンドが見つかりません"* ]]
+  [[ $output == *"Backend not found"* ]]
   [ -z "$(sudo_log)" ]
 }
 

@@ -551,15 +551,15 @@
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -613,16 +613,16 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ 状態の一覧（取得 02:04:28）                                                               │
+│    1 │ Status (fetched 21:15:39)                                                                 │
 │    2 │                                                                                           │
-│    3 │ ホスト: example-vm                                                                        │
-│    4 │ 取得時刻: 2026-11-27T01:02:03Z                                                            │
-│    5 │ 人の入口: 稼働中 (active) sshd running                                                    │
-│    6 │ Tailscale: つながっている (connected) logged in                                           │
-│    7 │ ディスク:                                                                                 │
+│    3 │ Host: example-vm                                                                          │
+│    4 │ Generated at: 2026-11-27T01:02:03Z                                                        │
+│    5 │ Human entrance: active sshd running                                                       │
+│    6 │ Tailscale: connected logged in                                                            │
+│    7 │ Disks:                                                                                    │
 │    8 │   / 42%                                                                                   │
-│    9 │   /var 93% 残りわずか                                                                     │
-│   10 │ セッション: 2 件                                                                          │
+│    9 │   /var 93% nearly full                                                                    │
+│   10 │ Sessions: 2                                                                               │
 │   11 │   claude-1 claude-code 2026-11-27T00:00:00Z                                               │
 │   12 │   muse-1 muse 2026-11-26T23:00:00Z                                                        │
 │    ~ │                                                                                           │
@@ -675,9 +675,9 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-状態の一覧
-> 再読み込み
-  戻る
+Status
+> Reload
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -737,16 +737,16 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 ╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
-│    1 │ 状態の一覧（取得 02:04:31）                                                               │
+│    1 │ Status (fetched 21:15:42)                                                                 │
 │    2 │                                                                                           │
-│    3 │ ホスト: example-vm                                                                        │
-│    4 │ 取得時刻: 2026-11-27T01:02:03Z                                                            │
-│    5 │ 人の入口: 稼働中 (active) sshd running                                                    │
-│    6 │ Tailscale: つながっている (connected) logged in                                           │
-│    7 │ ディスク:                                                                                 │
+│    3 │ Host: example-vm                                                                          │
+│    4 │ Generated at: 2026-11-27T01:02:03Z                                                        │
+│    5 │ Human entrance: active sshd running                                                       │
+│    6 │ Tailscale: connected logged in                                                            │
+│    7 │ Disks:                                                                                    │
 │    8 │   / 42%                                                                                   │
-│    9 │   /var 93% 残りわずか                                                                     │
-│   10 │ セッション: 2 件                                                                          │
+│    9 │   /var 93% nearly full                                                                    │
+│   10 │ Sessions: 2                                                                               │
 │   11 │   claude-1 claude-code 2026-11-27T00:00:00Z                                               │
 │   12 │   muse-1 muse 2026-11-26T23:00:00Z                                                        │
 │    ~ │                                                                                           │
@@ -799,9 +799,9 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-状態の一覧
-> 再読み込み
-  戻る
+Status
+> Reload
+  Back
 
 
 ←↓↑→ navigate • enter submit
@@ -830,9 +830,9 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-状態の一覧
-  再読み込み
-> 戻る
+Status
+  Reload
+> Back
 
 
 ←↓↑→ navigate • enter submit
@@ -861,9 +861,9 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-状態の一覧
-  再読み込み
-> 戻る
+Status
+  Reload
+> Back
 
 
 ←↓↑→ navigate • enter submit
@@ -923,15 +923,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-> 状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-  終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+> Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+  Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -954,15 +954,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-> 終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+> Quit
 
 
 ←↓↑→ navigate • enter submit
@@ -985,15 +985,15 @@ versteck-remote-tui 0.0.0-dev | 認証: sudo なし
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-versteck-remote-tui 0.0.0-dev | 認証: sudo なし
-バックエンド: /src/tests/fixtures/fake-backend
-  状態の一覧
-  セッションを覗く
-  セッションを止める
-  監査ログ
-  止め方の手順
-  シェルへ降りる
-> 終了
+versteck-remote-tui 0.0.0-dev | auth: no sudo
+Backend: /src/tests/fixtures/fake-backend
+  Status
+  Peek session
+  Stop session
+  Audit log
+  Kill switches
+  Drop to shell
+> Quit
 
 
 ←↓↑→ navigate • enter submit

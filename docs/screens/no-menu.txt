@@ -520,9 +520,9 @@
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-バックエンドが見つかりません: /usr/local/sbin/versteck-ctl（versteck 側で入れるものです。VERSTECK_TU
-I_BACKEND で場所を変えられます）
-メニューを出せないので、シェルへ降ります（TUI の記録の外です）。
+Backend not found: /usr/local/sbin/versteck-ctl (it is installed on the versteck side; set VERSTECK_
+TUI_BACKEND to change the location)
+The menu cannot be shown, so dropping to a shell (outside the TUI record).
 root@example-vm:/src#
 
 
@@ -551,9 +551,9 @@ root@example-vm:/src#
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-バックエンドが見つかりません: /usr/local/sbin/versteck-ctl（versteck 側で入れるものです。VERSTECK_TU
-I_BACKEND で場所を変えられます）
-メニューを出せないので、シェルへ降ります（TUI の記録の外です）。
+Backend not found: /usr/local/sbin/versteck-ctl (it is installed on the versteck side; set VERSTECK_
+TUI_BACKEND to change the location)
+The menu cannot be shown, so dropping to a shell (outside the TUI record).
 root@example-vm:/src#
 
 
@@ -582,9 +582,9 @@ root@example-vm:/src#
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-バックエンドが見つかりません: /usr/local/sbin/versteck-ctl（versteck 側で入れるものです。VERSTECK_TU
-I_BACKEND で場所を変えられます）
-メニューを出せないので、シェルへ降ります（TUI の記録の外です）。
+Backend not found: /usr/local/sbin/versteck-ctl (it is installed on the versteck side; set VERSTECK_
+TUI_BACKEND to change the location)
+The menu cannot be shown, so dropping to a shell (outside the TUI record).
 root@example-vm:/src# echo VERSTECK_REMOTE_TUI_SKIP=$VERSTECK_REMOTE_TUI_SKIP
 
 
@@ -613,9 +613,9 @@ root@example-vm:/src# echo VERSTECK_REMOTE_TUI_SKIP=$VERSTECK_REMOTE_TUI_SKIP
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-バックエンドが見つかりません: /usr/local/sbin/versteck-ctl（versteck 側で入れるものです。VERSTECK_TU
-I_BACKEND で場所を変えられます）
-メニューを出せないので、シェルへ降ります（TUI の記録の外です）。
+Backend not found: /usr/local/sbin/versteck-ctl (it is installed on the versteck side; set VERSTECK_
+TUI_BACKEND to change the location)
+The menu cannot be shown, so dropping to a shell (outside the TUI record).
 root@example-vm:/src# echo VERSTECK_REMOTE_TUI_SKIP=$VERSTECK_REMOTE_TUI_SKIP
 VERSTECK_REMOTE_TUI_SKIP=1
 root@example-vm:/src#
@@ -644,9 +644,9 @@ root@example-vm:/src#
 
 ────────────────────────────────────────────────────────────────────────────────
 > versteck-remote-tui
-バックエンドが見つかりません: /usr/local/sbin/versteck-ctl（versteck 側で入れるものです。VERSTECK_TU
-I_BACKEND で場所を変えられます）
-メニューを出せないので、シェルへ降ります（TUI の記録の外です）。
+Backend not found: /usr/local/sbin/versteck-ctl (it is installed on the versteck side; set VERSTECK_
+TUI_BACKEND to change the location)
+The menu cannot be shown, so dropping to a shell (outside the TUI record).
 root@example-vm:/src# echo VERSTECK_REMOTE_TUI_SKIP=$VERSTECK_REMOTE_TUI_SKIP
 VERSTECK_REMOTE_TUI_SKIP=1
 root@example-vm:/src#

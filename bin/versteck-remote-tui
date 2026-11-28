@@ -7,7 +7,7 @@ vrt_self=$(readlink -f -- "${BASH_SOURCE[0]}")
 # lib の場所は、このスクリプトの置き場所からだけ決める（環境変数で差し替えさせない）
 VRT_LIBDIR="$(dirname -- "$vrt_self")/../lib/versteck-remote-tui"
 if [[ ! -r $VRT_LIBDIR/main.sh ]]; then
-  echo "versteck-remote-tui: lib が見つかりません: $VRT_LIBDIR" >&2
+  echo "versteck-remote-tui: lib not found: $VRT_LIBDIR" >&2
   exit 1
 fi
 for vrt_f in "$VRT_LIBDIR"/*.sh; do
